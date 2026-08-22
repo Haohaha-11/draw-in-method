@@ -33,6 +33,13 @@ separate from imported icons unless the asset itself semantically includes the
 text. Group logical modules, but avoid one giant group that makes ordinary
 editing cumbersome.
 
+When a library arrow language is requested, follow `arrow-system.md`. Retain a
+native connector for each scientific relation. If PowerPoint's built-in
+arrowhead is visually unsuitable, use a no-head connector plus a small embedded
+SVG marker at the destination, grouped at handoff when practical. Use a compact
+SVG funnel/filter as a pruning operator between two connectors; never stretch a
+chevron until it visually becomes both the operator and the flow arrow.
+
 ## What “editable” means
 
 The following must be separately selectable and editable in PowerPoint:

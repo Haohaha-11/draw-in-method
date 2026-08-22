@@ -305,6 +305,8 @@ flowchart LR
 
 底色在这一步确定，因为它会直接影响分组、视觉重量和模块组合判断。每个检查点都可以渲染预览；在模块大小和箭头逻辑通过之前，不进入下一步。
 
+1A、1B、1C、1D 必须是四个真实的中间快照：每张只包含截至当前检查点已经加入的内容，不能先画完 Stage 1 再事后解释为“分步”。`STAGE 1A` 之类的制作标签写在文件名和 review 记录中，不写进论文图画布。
+
 ### 第 2 步：文字、批注和讲解
 
 加入：
@@ -423,6 +425,14 @@ ImageGen 生成的透明 PNG 是位图素材，不是真正的 SVG 矢量图标�
 - 四条以上扇入或扇出时使用总线、主干或明确汇合点；
 - 箭头连接语义端口，不连接标题条或装饰对象；
 - 先审核连接符骨架，再添加密集内容。
+
+矢量库箭头采用“三层分离”：
+
+1. 原生连接器负责真实拓扑、端口和路由；
+2. 同一矢量家族的 SVG marker 负责更漂亮、统一的箭头视觉；
+3. funnel、filter、merge、zoom 等 SVG 是独立操作节点，不是连接线。
+
+Skill 内置了一组 Lucide SVG 作为默认箭头语言。也可以换成阿里巴巴 Iconfont、Flaticon、Iconify 或用户指定的矢量家族，但必须记录来源和许可状态。禁止再次把一个巨大的 chevron 同时当作“流程箭头”和“Top-m 剪枝模块”。
 
 ---
 
@@ -678,6 +688,8 @@ draw-in-method/
 │   ├── icon-registry.json
 │   ├── lobe-icons.json
 │   └── shape-index.json.gz
+├── assets/
+│   └── vector-arrows/       # bundled Lucide arrow/operator SVG family
 └── tests/
     └── test_vector_assets.py
 ```
@@ -686,6 +698,7 @@ draw-in-method/
 
 - [SKILL.md](SKILL.md)：Codex 实际加载的核心决策和工作流；
 - [architecture-figure-contract.md](references/architecture-figure-contract.md)：架构图字体、色板、尺寸和箭头合同；
+- [arrow-system.md](references/arrow-system.md)：原生连接器、矢量箭头 marker 与操作符图标的三层语法；
 - [staged-drawing-workflow.md](references/staged-drawing-workflow.md)：四步生产流程、增量 review 检查点和批准门槛；
 - [pptx-authoring.md](references/pptx-authoring.md)：PowerPoint 原生可编辑后端；
 - [semantic-first-workflow.md](references/semantic-first-workflow.md)：语义图和不确定性处理；

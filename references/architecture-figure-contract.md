@@ -19,6 +19,9 @@ figure itself, not a slide containing a figure.
   headings → module labels → tensor and operator annotations.
 - Use whitespace to separate stages. Use a container only when it denotes a
   real semantic group, not as a decorative card.
+- Do not place workflow/debug labels such as `STAGE 1`, `DRAFT`, or review
+  instructions inside the production canvas. Put them in filenames and review
+  notes.
 - Shadows, gradients, glossy effects, oversized rounded cards, and decorative
   pills are off by default. Corner radii are modest: 4–10 px.
 
@@ -143,6 +146,10 @@ whether an arrowhead is required.
   connector after the boxes have already been placed.
 - Create connectors before nodes in PowerPoint so lines sit behind shapes, but
   approve the connector-only skeleton before adding dense internal content.
+- Library SVG arrows may define the visible arrowhead or short transition
+  motif, but they do not replace the semantic connector ledger. Use a separate
+  compact SVG operator (for example a funnel for Top-m pruning) when an action
+  occurs between modules. Read `arrow-system.md` for the required split.
 
 ## 6. Four-stage incremental production
 

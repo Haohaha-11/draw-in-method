@@ -2,6 +2,14 @@
 
 This package includes small MIT-licensed utility portions. The notices below are retained for license compliance; they do not define the project workflow or visual language.
 
+## Lucide vector-arrow assets
+
+The files under `assets/vector-arrows/` are derived from the Lucide icon
+project. Lucide is distributed under the ISC License; several Feather-derived
+icons also retain the upstream MIT notice. The complete notice shipped with
+the assets is available at `assets/vector-arrows/LICENSE.txt`, and the upstream
+license is maintained at https://github.com/lucide-icons/lucide/blob/main/LICENSE.
+
 ## MIT notice — component A
 
 Copyright (c) 2026 Agents365-ai

@@ -35,6 +35,15 @@ experimental apparatus, application contexts, and outputs. Do not put an icon
 in every model block. Within one panel, keep one dominant non-brand icon family
 unless a semantic exception is necessary.
 
+Arrow and connector assets are a special case. Read `arrow-system.md` before
+using them. Search a coherent family by semantic name (`arrow right`,
+`conditioning`, `feedback`, `funnel`, `filter`, `zoom detail`) rather than
+browsing decorative arrows. Ordinary data-flow relations must still be backed
+by editable connectors. Library SVGs are appropriate for consistent rounded
+arrowheads, short transition motifs, pruning/routing operators, and detail-view
+markers; they are not a license to replace the whole topology with floating
+arrow pictures.
+
 ## Importing user-downloaded assets
 
 The importer accepts:

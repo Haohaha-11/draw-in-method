@@ -27,6 +27,12 @@ decorative assets.
 
 Build and review incrementally:
 
+Each checkpoint is a separate rendered artifact or slide that contains only
+the decisions approved up to that point. Do not present a fully populated
+Stage 1 and retrospectively describe it as incremental. Keep checkpoint names
+in filenames, review notes, or the editor UI; do not place production labels
+such as `STAGE 1A` inside the paper figure canvas.
+
 ### Checkpoint 1A — canvas, background, and regions
 
 - Choose the canvas/aspect ratio and outer margins.
@@ -52,6 +58,9 @@ Build and review incrementally:
 - Verify arrow direction, arrowhead placement, baseline continuity, and label
   clearance.
 - Render a connector-focused preview before adding secondary routes.
+- Inspect the main path as a silhouette: module centers must share one baseline
+  unless a height change carries explicit scientific meaning. Diagonal repair
+  edges caused by misaligned boxes are a rejection condition.
 
 ### Checkpoint 1D — branches, merges, skip paths, and feedback
 
@@ -62,6 +71,11 @@ Build and review incrementally:
   each relation family is added.
 - Do not proceed while an arrow passes through text, a module, or an unrelated
   region.
+- Use the relation/asset split in `arrow-system.md`: actual relations remain
+  connectors bound to semantic ports, while approved SVG arrow markers or
+  operator icons supply the visual language. A funnel/filter icon may denote a
+  pruning operator; it must not be mistaken for the connector that carries
+  data into or out of that operator.
 
 ### Stage 1 approval gate
 
@@ -77,6 +91,11 @@ Approve the architecture only when:
 After approval, treat the architecture as provisionally frozen. Later stages
 may make small spacing corrections, but a structural problem must return to
 Stage 1 rather than being hidden with typography or decoration.
+
+Stage 1 is rejected when containers occupy most of the canvas but their
+contents leave large unused bands, when a context-image placeholder outweighs
+the proposed module, or when the overview and detail views read as unrelated
+dashboard cards. Measure content occupancy, not merely outer-frame occupancy.
 
 ## Stage 2 — scientific text, annotations, and explanation
 
