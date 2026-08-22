@@ -231,19 +231,20 @@ $draw-in-method
 现实对象图标先按名称搜索已有 SVG；模型计算使用原生矢量模块。
 ```
 
-### 示例三：只做第一阶段线框
+### 示例三：只做第 1 步架构
 
 ```text
-使用 $draw-in-method 为下面的方法建立第一版线框。
+使用 $draw-in-method 为下面的方法完成语义准备，并建立第 1 步架构。
 
 这一步只输出：
 - figure-model.json；
-- 黑白模块布局；
-- 端口和箭头通道；
-- 一张线框预览。
+- 画布、底色和语义区域；
+- 统一尺寸族的模块组合；
+- 端口、箭头通道以及分支、汇合、跳连和反馈；
+- 分检查点的架构预览和 production-review.md。
 
-暂时不要添加图标、正式配色、阴影或装饰。
-等我确认结构后再进入字体与配色阶段。
+暂时不要添加正式文字批注、图标、插画、阴影或装饰。
+等我确认模块大小和箭头逻辑后再进入第 2 步。
 ```
 
 ### English example
@@ -251,9 +252,11 @@ $draw-in-method
 ```text
 Use $draw-in-method to understand this method and create a native editable PPTX figure.
 
-Start with the semantic graph and a monochrome connector wireframe.
-Use one dominant left-to-right data path, explicit ports, compact paper-scale typography,
-and a separate module-detail panel only for the proposed mechanism.
+Complete semantic preflight first, then build Stage 1 with restrained base fills,
+consistent module-size families, explicit ports, and reviewed connector lanes.
+Use one dominant left-to-right data path and a separate module-detail panel only
+for the proposed mechanism. Add final scientific labels and assets only after the
+architecture is approved.
 Do not invent unreadable equations or flatten the final slide into a full-canvas image.
 Deliver the editable PPTX and a rendered PNG preview.
 ```
@@ -264,20 +267,20 @@ Deliver the editable PPTX and a rendered PNG preview.
 
 ```mermaid
 flowchart LR
-    A[Paper / Method / Code / Reference] --> B[Semantic Brief]
-    B --> C[figure-model.json]
-    C --> D[Wireframe & Connector Routing]
-    D --> E[Typography & Labels]
-    E --> F[Palette & Named Assets]
-    F --> G{Native Backend}
-    G --> H[Editable PPTX]
-    G --> I[Editable Draw.io]
-    H --> J[Render & QA]
-    I --> J
-    J --> K[PNG / SVG / PDF]
+    A[Paper / Method / Code / Reference] --> B[Semantic Preflight]
+    B --> C[brief.md + figure-model.json]
+    C --> D[1 Architecture + Base Color + Modules + Arrows]
+    D --> E[2 Scientific Text + Annotations]
+    E --> F[3 SVG Assets or Transparent PNG Cutouts]
+    F --> G[4 Visual Review + Coordinated Refinement]
+    G --> H{Native Editable Backend}
+    H --> I[PowerPoint]
+    H --> J[Draw.io]
+    I --> K[PNG / SVG / PDF Review Exports]
+    J --> K
 ```
 
-### 阶段 1：语义骨架
+### Stage 0：语义准备，不计入四个生图步骤
 
 先创建 `brief.md` 和 `figure-model.json`，明确：
 
@@ -289,20 +292,20 @@ flowchart LR
 
 在语义模型通过验证之前，不开始正式几何绘制。
 
-### 阶段 2：黑白线框和箭头
+### 第 1 步：架构、底色、模块组合和箭头
 
-只处理：
+这一步建立整张图的视觉骨架，并边添加边 review：
 
-- 画布比例；
-- 模块尺寸；
-- 对齐基线；
+- **1A 画布与区域**：确定画布比例、外边距、面板分区、阅读方向和低饱和度底色；
+- **1B 模块组合**：建立普通模块、小算子、创新模块和容器的尺寸族，统一重复模块；
+- **1C 主连接骨架**：确定主数据流基线、端口、箭头方向和专用通道；
+- **1D 复杂关系**：补充分支、汇合、跳连、反馈、控制和更新关系，并检查交叉与遮挡；
 - 输入、输出、控制和辅助端口；
-- 箭头通道与避让区域；
-- 分支、汇合、跳连和反馈的真实方向。
+- 必要的占位标签，但不加入完整讲解和正式资产。
 
-这个阶段应当能在没有颜色和图标的情况下讲清楚方法。
+底色在这一步确定，因为它会直接影响分组、视觉重量和模块组合判断。每个检查点都可以渲染预览；在模块大小和箭头逻辑通过之前，不进入下一步。
 
-### 阶段 3：字体和科学标注
+### 第 2 步：文字、批注和讲解
 
 加入：
 
@@ -315,22 +318,28 @@ flowchart LR
 
 优先删掉冗余文字、调整模块或拆分面板，不通过无限缩小字号解决拥挤。
 
-### 阶段 4：语义配色和命名资产
+### 第 3 步：命名矢量资产或透明背景生成资产
 
-- 一张图通常选择 3–5 种语义色；
-- 创新色保持稀缺；
-- 现实对象按名称检索矢量资产；
+- 现实对象优先按规范名称及中英文别名检索已有 SVG；
+- 检索顺序为本地注册表、原生形状、Iconfont、Flaticon、Iconify 和其他已获授权来源；
 - 模型计算使用原生可编辑形状；
 - 所有选用或放弃的资产记录在 `asset-ledger.md`；
-- 最终资产嵌入本地文件，不保留运行时 CDN 依赖。
+- 最终资产嵌入本地文件，不保留运行时 CDN 依赖；
+- 没有合适图标且确实需要定制场景时，可以用 ImageGen 生成透明背景 PNG cutout。
 
-### 阶段 5：原生后端和质量检查
+ImageGen 生成的透明 PNG 是位图素材，不是真正的 SVG 矢量图标。需要可缩放、可改路径的矢量资产时，应继续使用命名检索得到的 SVG，或采用另行确认的矢量化流程。
 
-- 生成 PPTX 或 Draw.io；
+### 第 4 步：完整视觉 Review 和协调微调
+
 - 渲染全画布预览；
-- 检查文字、公式、箭头、重叠、裁切和字体替换；
+- 检查文字、公式、箭头、模块比例、重叠、裁切和字体替换；
+- 检查图标位置、大小、视觉重量和风格一致性；
+- 微调对齐、间距、字号、色彩权重和连接符净空；
 - 验证代表性文字、模块、连接符和 SVG 可以独立选择；
-- 高保真任务执行多轮截图 → 缺陷清单 → 修复 → 重渲染。
+- 高保真任务执行多轮截图 → 缺陷清单 → 修复 → 重渲染；
+- 如果发现结构性问题，返回第 1 步修正，不用装饰掩盖错误。
+
+四步法的检查点、批准条件、交付证据和自主执行规则见 [staged-drawing-workflow.md](references/staged-drawing-workflow.md)。
 
 ---
 
@@ -427,6 +436,8 @@ flowchart LR
 4. 在获得授权且确实需要时，通过对应网站的正常可见界面检索；
 5. 没有合适资产、用户明确要求自定义，或对象属于论文特有抽象机制时，才从基础矢量图元构造。
 
+ImageGen 适合制作带透明背景的定制位图 cutout 或构图参考，但其输出不应被标注为 SVG 或“可编辑矢量”。真正的矢量资产仍以 SVG 检索、导入和清洗流程为准。
+
 ### 为什么不默认自己拼图标
 
 现实对象通常具有明确的视觉比例、轮廓和领域特征。简单矩形、圆形和折线可以表达抽象计算，但很难稳定表达传感器、显微镜、病理切片、可穿戴设备或复杂实验装置。搜索优先可以提高：
@@ -462,6 +473,7 @@ python scripts/vector_assets.py --help
 | `visual-spec.md` | 字体、色板、尺寸、线宽、圆角和视觉层级 |
 | `layout-grid.md` | 画布、区域框、基线、重复模块尺寸和连接通道 |
 | `asset-ledger.md` | 命名检索、候选资产、来源、选择理由和回退原因 |
+| `production-review.md` | 四个生产步骤及第 1 步子检查点的预览、发现、修复和批准记录 |
 | `defect-log.md` | 截图复查、缺陷、修复、红队检查和自评分 |
 
 初始化一个非破坏性的图形工作区：
@@ -530,7 +542,13 @@ python scripts/init_figure_workspace.py <work-dir> --title "Method Overview"
 python scripts/validate_figure_model.py <work-dir>\figure-model.json
 ```
 
-检查未知端点、重复 ID、缺失字段和未解决的命名资产检索。
+检查未知端点、重复 ID、缺失字段和缺少命名计划的资产。第 3 步完成后，再执行严格资产门槛：
+
+```powershell
+python scripts/validate_figure_model.py <work-dir>\figure-model.json --require-assets-resolved
+```
+
+严格模式要求每个资产检索都已经选定本地资产，或记录具体的回退原因。
 
 ### 验证 Draw.io
 
@@ -643,6 +661,7 @@ draw-in-method/
 │   ├── pptx-authoring.md
 │   ├── reference-replication-protocol.md
 │   ├── semantic-first-workflow.md
+│   ├── staged-drawing-workflow.md
 │   ├── vector-assets.md
 │   ├── xml-authoring.md
 │   └── ...
@@ -667,6 +686,7 @@ draw-in-method/
 
 - [SKILL.md](SKILL.md)：Codex 实际加载的核心决策和工作流；
 - [architecture-figure-contract.md](references/architecture-figure-contract.md)：架构图字体、色板、尺寸和箭头合同；
+- [staged-drawing-workflow.md](references/staged-drawing-workflow.md)：四步生产流程、增量 review 检查点和批准门槛；
 - [pptx-authoring.md](references/pptx-authoring.md)：PowerPoint 原生可编辑后端；
 - [semantic-first-workflow.md](references/semantic-first-workflow.md)：语义图和不确定性处理；
 - [vector-assets.md](references/vector-assets.md)：Iconfont、Flaticon、Iconify 和本地 SVG；
@@ -702,6 +722,7 @@ PYTHONUTF8=1 python -X utf8 -B -m unittest discover -s tests -p 'test_*.py' -v
 
 当前测试覆盖：
 
+- 语义准备允许仅规划资产，而第 3 步严格门槛会拒绝未解决资产；
 - Flaticon ZIP 中多色 SVG 的保留；
 - Iconfont symbol bundle 解析；
 - 本地 SVG 导入、搜索、嵌入和验证。
@@ -749,7 +770,8 @@ git status --short
 
 当前计划继续优化：
 
-- [ ] 更稳定的分阶段 PPTX 中间预览与用户确认机制；
+- [x] 四步生产流程、增量 review 检查点和用户确认记录规范；
+- [ ] 自动导出并归档每个 PPTX 阶段的中间预览；
 - [ ] 连接符通道自动规划、端口分配和交叉最小化；
 - [ ] 对 PowerPoint 原生对象的更细粒度可编辑性检查；
 - [ ] 更强的公式渲染、字体回退和跨平台一致性；

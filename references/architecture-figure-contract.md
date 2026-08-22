@@ -144,26 +144,37 @@ whether an arrowhead is required.
 - Create connectors before nodes in PowerPoint so lines sit behind shapes, but
   approve the connector-only skeleton before adding dense internal content.
 
-## 6. Staged PowerPoint production
+## 6. Four-stage incremental production
 
-For architecture figures, do not jump from description to a decorated PPTX.
-Use these approval stages when collaborating with the user:
+Complete the semantic brief, `figure-model.json`, and edge ledger as a
+**preflight**. This understanding work is mandatory, but it is not counted as
+one of the four visible drawing stages. Then follow
+`staged-drawing-workflow.md`:
 
-1. **Semantic skeleton** — nodes, groups, reading order, and typed edge ledger;
-   no polished color or icons.
-2. **Wireframe and routing** — monochrome blocks, exact module sizes, main
-   baselines, ports, and connector lanes. Render a preview and fix arrow logic.
-3. **Typography and labels** — apply the type scale, tensor labels, equations,
-   and panel labels; check paper-scale readability.
-4. **Palette and assets** — assign 3–5 semantic colors and add only approved
-   named vector assets or genuine data images.
-5. **Native PPTX and QA** — export, render, inspect dense regions, test
-   independent editability, and complete screenshot-driven refinements.
+1. **Architecture, base color, modules, and arrows** — establish canvas regions,
+   low-saturation semantic fills, module-size families, alignment baselines,
+   ports, and every connector. Review incrementally after the canvas/regions,
+   module composition, main connector skeleton, and branch/merge/skip/feedback
+   routes. Base color belongs here because it changes grouping and visual
+   weight; final text and decorative assets do not.
+2. **Scientific text and annotations** — add module names, tensor labels,
+   equations, stage captions, panel labels, and only explanations that help the
+   reader decode the method. Reflow modules before shrinking important text.
+3. **Named vector assets or transparent cutouts** — retrieve a semantically
+   matched local/native/Iconfont/Flaticon/Iconify SVG first. Image generation
+   may provide a transparent-background raster cutout when a bespoke context
+   illustration is appropriate, but that PNG is not an editable vector.
+4. **Full visual review and coordinated refinement** — render the entire canvas
+   and dense crops, then tune spacing, alignment, font sizes, color weight,
+   connector clearance, and asset scale without changing approved semantics.
 
-Do not proceed to the next stage when the current preview has ambiguous arrows,
-incorrect semantics, or unapproved composition. For a quick user request a
-single turn may implement several stages, but the artifacts and checks remain
-separate.
+In interactive work, stop at each requested approval gate and record the
+preview, findings, fixes, and decision in `production-review.md`. Do not advance
+while the current preview has ambiguous arrows, inconsistent module sizes,
+incorrect semantics, or an unapproved composition. If Stage 4 exposes a
+structural defect, return to Stage 1 instead of disguising it with decoration.
+For an autonomous request, the same stages and checks remain separate even if
+they are completed in one run.
 
 ## 7. Architecture-mode rejection checks
 

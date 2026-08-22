@@ -29,10 +29,17 @@ figure-model.json
 visual-spec.md
 layout-grid.md
 asset-ledger.md
+production-review.md
 defect-log.md
 ```
 
 Run `scripts/validate_replication_artifacts.py <workdir>` before authoring Draw.io XML. For PPTX, verify the same evidence set manually until the validator supports the backend-specific deliverable.
+
+Use `production-review.md` to preserve the semantic preflight decision and the
+four production-stage gates defined in `staged-drawing-workflow.md`, including
+the four incremental Stage 1 architecture checkpoints. Use `defect-log.md` for
+the deeper screenshot inventories, red-team audit, and final quality evidence;
+the two files serve different purposes.
 
 For either backend, also run:
 
@@ -40,7 +47,15 @@ For either backend, also run:
 python scripts/validate_figure_model.py <workdir>/figure-model.json
 ```
 
-Do not proceed while the semantic model has an unknown edge endpoint or an unresolved named-asset search.
+Do not proceed to Stage 1 while the semantic model has an unknown edge endpoint
+or a physical/context entity lacks a named-asset plan. Asset selection itself
+belongs to Stage 3. At the end of Stage 3, run:
+
+```powershell
+python scripts/validate_figure_model.py <workdir>/figure-model.json --require-assets-resolved
+```
+
+Do not proceed to final review while that strict asset gate fails.
 
 After the latest screenshot pass and before handoff, run:
 
@@ -250,12 +265,14 @@ If the first draft is messy, do not continue patching randomly. Return to `visua
 
 Prefer a simpler but structurally faithful first draft over a visually dense but incoherent drawing:
 
-1. Correct semantic nodes, groups, and relations in `figure-model.json`.
-2. Resolve named physical/context assets and uncertainty.
-3. Correct canvas and major regions.
-4. Correct container hierarchy and text placement.
-5. Correct arrows and connector semantics.
-6. Correct icons, colors, and polish.
+1. Correct semantic nodes, groups, relations, uncertainties, and asset plans in
+   `figure-model.json`.
+2. Correct canvas, base color regions, module-size families, and container
+   hierarchy.
+3. Correct arrows, ports, and connector semantics.
+4. Correct scientific text, annotations, and paper-scale readability.
+5. Resolve and place named physical/context assets.
+6. Complete full-canvas review, coordinated micro-adjustments, and export QA.
 
 Only after the structure is correct should the agent increase visual density.
 

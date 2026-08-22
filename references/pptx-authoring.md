@@ -65,10 +65,17 @@ Preserve the typography hierarchy from `visual-spec.md`. Avoid shrinking
 critical labels to fit; enlarge the important module, abbreviate redundant
 copy, or split into multiple panels/slides.
 
-Build architecture slides in five separable passes: semantic skeleton,
-monochrome wireframe/routing, typography, palette/assets, and native PPTX QA.
-Render the wireframe before decoration. Resolve arrow crossings, ambiguous
-ports, inconsistent module sizes, and baseline errors at that stage.
+After semantic preflight, build architecture slides through the four production
+stages in `staged-drawing-workflow.md`. Stage 1 creates the native architecture
+with restrained base fills, module-size families, alignment baselines, ports,
+and all connector routes; use only the placeholder labels required to review
+geometry. Render and review its canvas/regions, module composition, main flow,
+and branch/merge/skip/feedback routes incrementally. Stage 2 adds scientific
+text and annotations. Stage 3 inserts approved SVG assets or explicitly raster
+transparent cutouts. Stage 4 renders the full slide and dense crops for
+coordinated layout, font-size, color-weight, and connector-clearance refinement.
+Record review gates in `production-review.md` and resolve structural problems in
+Stage 1 rather than masking them during decoration.
 
 ## Asset handling
 

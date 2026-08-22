@@ -21,6 +21,7 @@ Turn a paper, description, or reference image into a figure that is easy to deco
 - Resolve every physical/context icon by semantic name. Search existing vector assets before composing one from primitives; record queries, candidates, provenance, and any fallback reason in `asset-ledger.md`.
 - Apply the reusable quality rules in `references/general-quality-contract.md`; they encode paper-scale readability, compact composition, explicit connector semantics, rendered LaTeX, real-object asset boundaries, and export-driven review.
 - For neural-network, system-pipeline, encoder-decoder, fusion, or module architecture figures, enable **architecture figure mode** and read `references/architecture-figure-contract.md`. It overrides presentation-slide habits: no large headline, subtitle, footer explanation, or decorative card framing by default.
+- Use `references/staged-drawing-workflow.md` for user-visible production: after semantic preflight, build and review four stages in order—(1) architecture/base color/modules/arrows, (2) scientific text and annotations, (3) named SVG assets or generated transparent raster cutouts, and (4) full visual review and coordinated refinement. When the user requests step-by-step review, stop at the requested gate before advancing.
 
 ## Fast decision tree
 
@@ -29,7 +30,7 @@ Turn a paper, description, or reference image into a figure that is easy to deco
 3. **Multi-panel figure** — use `(a) Overall Architecture`, `(b) Proposed Module`, and optionally `(c) Training/Downstream Tasks)` when one canvas would otherwise be unreadable. Panels share the same grid and legend.
 4. **Reference replication** — treat the image as a style/layout source, not as the scientific source. Follow `references/reference-replication-protocol.md` and create the required intermediate artifacts before writing XML.
 
-For architecture figures, the deliverable is a paper figure on a slide-sized canvas, not a conventional presentation slide. Use the staged architecture workflow: semantic skeleton → monochrome wireframe and connector routing → typography → palette/assets → native backend and QA. Do not decorate a semantically or geometrically unapproved wireframe.
+For architecture figures, the deliverable is a paper figure on a slide-sized canvas, not a conventional presentation slide. Complete semantic preflight first, then use the four production stages in `references/staged-drawing-workflow.md`. Stage 1 establishes the background, semantic color blocks, module-size families, composition, and every connector, with incremental review before text or assets. Do not decorate a semantically or geometrically unapproved architecture.
 
 After choosing a diagram type, choose exactly one primary editable backend:
 
@@ -54,7 +55,9 @@ Read the paper section, abstract/method, prompt, code, and supplied images. Clas
 
 Create `brief.md` with goal, audience, output backend, must-communicate items, exclusions, terminology, and open assumptions. Create `figure-model.json` with named nodes, groups, typed edges, reading order, asset needs, and unresolved evidence. Use `references/semantic-first-workflow.md` and `references/self-supervision-and-intake.md` for the model and traceability table. Do not author layout geometry until every required edge has a source, target, and relation meaning.
 
-Before drawing, run `python <skill-dir>/scripts/validate_figure_model.py <workdir>/figure-model.json`. Resolve all reported errors, including unresolved named-asset searches.
+Before drawing, run `python <skill-dir>/scripts/validate_figure_model.py <workdir>/figure-model.json`. Resolve all reported semantic errors and ensure every search-based asset has a canonical name, aliases, and planned query. The actual SVG/PNG selection belongs to Stage 3. At the end of Stage 3, run the validator again with `--require-assets-resolved`; every asset query must then name a selected asset or a concrete fallback reason.
+
+Treat this semantic work as a preflight, not as one of the four visible drawing stages. Create `production-review.md` and record the current gate, screenshot evidence, findings, fixes, and user decision. Preserve earlier reviewed gates rather than overwriting their history.
 
 ### 2. Style contract before drawing
 
@@ -81,24 +84,29 @@ Use one font family throughout (Arial/Helvetica; Noto Sans CJK for Chinese text)
 
 Relative-scale gate: treat typography and module area as a final design constraint, not an afterthought. Before handoff, inspect a canvas-only screenshot at the intended paper width and verify that panel titles are the largest text, contribution/module titles are visibly larger than annotations, and standard helper cells are not larger than the innovation block. As a practical starting point, use ≥20 px panel titles, ≥15 px key-module labels, ≥12 px tensor annotations on a 1600–2200 px canvas, and reserve at least 80–120 px width or 120–180 px height for a key module. If the figure is dense, enlarge the important module and remove redundant words before shrinking its font. Record any intentional deviations in `visual-spec.md` and the final screenshot review.
 
-### 3. Optional image-2 concept pass
+### 3. Optional concept reference; production assets belong to Stage 3
 
-Use the image-generation capability only when it helps explore composition or supplies a real-world input/context asset. Prompt for a clean academic concept with **no scientific text, no equations, and no tiny unlabeled blocks**. Treat the result as a visual reference; keep the paper-derived semantic graph authoritative. Do not embed the generated bitmap as the model pipeline. If a real input asset is used, record its provenance and role in `asset-ledger.md`.
+Use the image-generation capability before Stage 1 only when the user explicitly wants a composition concept. Treat that concept as a reference, not as the architecture. Final generated assets are added in Stage 3 after the architecture and scientific text are approved. Prompt for a clean academic concept or isolated transparent-background cutout with **no scientific text, no equations, and no tiny unlabeled blocks**. Keep the paper-derived semantic graph authoritative. Do not embed a generated bitmap as the model pipeline. Record every used asset's provenance and role in `asset-ledger.md`.
+
+Image generation produces raster output, including transparent PNG cutouts; it does not by itself produce a genuine editable SVG. Never describe a generated PNG as vector. When true vector editability matters, retrieve an SVG from the local registry, Iconfont, Flaticon, Iconify, or another authorized provider, or use a separately approved and validated vectorization workflow.
 
 Recommended concept prompt shape: “wide camera-ready scientific figure, left-to-right input–core innovation–output story, muted blue/teal/lavender/ochre palette, one restrained coral highlight for the proposed module, consistent rounded vector cards and arrows, generous whitespace, no words or equations, no decorative grids.” After generation, inspect the bitmap, write the semantic/layout inventory, and redraw the shapes and connectors in XML. If editing a user image, inspect it first and pass its local path as the image-generation reference; never use a guessed or missing path.
 
-### 4. Resolve named assets, then plan the composition
+### 4. Plan the composition, then resolve Stage 3 assets
 
-For every physical object, device, subject, experimental apparatus, application context, or output illustration:
+During preflight, record the canonical names and expected slots of required physical/context assets, but do not let asset retrieval determine the architecture. In Stage 1, reserve the asset geometry while approving module composition and arrow routing. In Stage 3, after structure and text are approved, resolve and insert the actual assets.
+
+For every physical object, device, subject, experimental apparatus, application context, or output illustration in Stage 3:
 
 1. give the entity a canonical semantic name and Chinese/English aliases;
 2. search the local asset registry and native shape libraries;
 3. when needed and authorized, search Iconfont, Flaticon, or another provider through its normal visible UI;
 4. compare semantic fit, viewBox quality, visual family, editability, and provenance;
 5. import, sanitize, recolor, register, and embed the selected SVG;
-6. compose a new icon from primitives only when no adequate asset exists, the user requests a custom symbol, or the entity is an abstract paper-specific mechanism.
+6. use image generation for a bespoke transparent-background raster cutout when a custom physical/context illustration is needed and vector editability is not required;
+7. compose a new icon from primitives only when no adequate asset exists, the user requests a custom symbol, or the entity is an abstract paper-specific mechanism.
 
-Read `references/vector-assets.md`. An unexplained primitive-built physical icon is a quality-gate failure when a named asset search was feasible. Model computation, tensors, attention, operators, and paper-specific mechanisms should still use native editable primitives rather than decorative library icons.
+Read `references/vector-assets.md` and the Stage 3 rules in `references/staged-drawing-workflow.md`. An unexplained primitive-built physical icon is a quality-gate failure when a named asset search was feasible. Model computation, tensors, attention, operators, and paper-specific mechanisms should still use native editable primitives rather than decorative library icons.
 
 For a framework view, choose a wide landscape canvas (roughly 1600–2200 × 850–1200 px), align stages on a single baseline, and leave whitespace around the contribution. For a module view, use a large central container with 3–6 labeled operations and small tensor-shape annotations. Use dashed containers only for meaningful groups (encoder, training-only path, memory bank, optional branch). Put the legend near a corner, never in the main flow.
 
@@ -110,7 +118,7 @@ Use one dominant non-brand icon family per panel and record every used or reject
 
 #### PowerPoint backend
 
-Read `references/pptx-authoring.md`. Author a one-slide figure (or one slide per requested panel) with native PowerPoint objects. Text must remain text; boxes must remain shapes; semantic edges must remain connectors; repeated modules should be grouped; selected icons should be embedded SVG objects rather than a whole-slide raster. Create connectors before nodes so they stay behind nodes. In architecture figure mode, keep the slide free of presentation chrome and apply the five staged review gates in `references/architecture-figure-contract.md`. Render and inspect the resulting PPTX; do not claim editability if the scientific figure is only a single PNG/SVG covering the slide.
+Read `references/pptx-authoring.md`. Author a one-slide figure (or one slide per requested panel) with native PowerPoint objects. Text must remain text; boxes must remain shapes; semantic edges must remain connectors; repeated modules should be grouped; selected icons should be embedded SVG objects rather than a whole-slide raster. Create connectors before nodes so they stay behind nodes. In architecture figure mode, keep the slide free of presentation chrome and apply the semantic preflight plus four production gates in `references/staged-drawing-workflow.md`. Render and inspect the resulting PPTX; do not claim editability if the scientific figure is only a single PNG/SVG covering the slide.
 
 #### Draw.io backend
 
@@ -166,6 +174,7 @@ SVG/PDF exports may also embed the XML. For PPTX, report the native `.pptx`, ren
 ## Bundled resources
 
 - `references/figure-contract.md` — concise ICML/NeurIPS/ICLR visual and semantic contract.
+- `references/staged-drawing-workflow.md` — semantic preflight plus four incremental, review-gated production stages for architecture, text, assets, and final visual refinement.
 - `references/architecture-figure-contract.md` — compact paper-architecture typography, reference palette, module scale, strict connector grammar, and staged PPTX workflow.
 - `references/semantic-first-workflow.md` — required image/paper understanding pass and format-neutral figure model.
 - `references/pptx-authoring.md` — native editable PowerPoint backend and PPTX-specific QA.
@@ -175,8 +184,8 @@ SVG/PDF exports may also embed the XML. For PPTX, report the native `.pptx`, ren
 - `references/diagram-types.md`, `shapes.md`, `troubleshooting.md` — draw.io shape vocabulary and fallback guidance.
 - `references/THIRD_PARTY_NOTICES.md` — license notices for included utility portions.
 - `scripts/make_drawio_preview.py`, `serve_drawio_preview.py`, `validate_drawio.py`, `validate_visual_quality.py`, and `validate_replication_artifacts.py` — preview and quality gates.
-- `scripts/validate_figure_model.py` — semantic graph, edge, group, and named-asset resolution gate before geometry.
-- `scripts/init_figure_workspace.py` — create non-destructive `brief.md`, `visual-spec.md`, `layout-grid.md`, `asset-ledger.md`, and `defect-log.md` scaffolding.
+- `scripts/validate_figure_model.py` — semantic graph and planned-asset gate before geometry, plus the strict `--require-assets-resolved` Stage 3 gate.
+- `scripts/init_figure_workspace.py` — create non-destructive `brief.md`, `visual-spec.md`, `layout-grid.md`, `asset-ledger.md`, `production-review.md`, and `defect-log.md` scaffolding.
 - `scripts/repair_png.py`, `encode_drawio_url.py`, `shapesearch.py`, `aiicons.py`, `autolayout.py`, `edgeports.py`, and `validate.py` — export repair, browser fallback, shape lookup, optional layout, edge-port distribution, and structural lint.
 - `scripts/vector_assets.py` and `data/icon-registry.json` — provider-agnostic local SVG import, Iconfont symbol extraction, safety cleaning, palette mapping, search, provenance, validation, and self-contained Draw.io image styles.
 - `data/shape-index.json.gz` and `data/lobe-icons.json` — local indexes used by shape and AI-icon lookup scripts.

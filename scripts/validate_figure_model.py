@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the semantic figure model before backend authoring."""
+"""Validate the semantic figure model before drawing or before final asset use."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ REQUIRED_TOP_LEVEL = {
 }
 
 
-def validate_model(data: object) -> list[str]:
+def validate_model(data: object, *, require_assets_resolved: bool = False) -> list[str]:
     errors: list[str] = []
     if not isinstance(data, dict):
         return ["top level must be a JSON object"]
@@ -111,11 +111,17 @@ def validate_model(data: object) -> list[str]:
             errors.append(f"{where}.canonical_name is required")
         if not isinstance(terms, list) or not any(str(term).strip() for term in terms):
             errors.append(f"{where}.queries must contain at least one term")
-        if not str(query.get("selected_asset", "")).strip() and not str(query.get("fallback_reason", "")).strip():
-            errors.append(f"{where} needs selected_asset or fallback_reason before drawing")
+        if (
+            require_assets_resolved
+            and not str(query.get("selected_asset", "")).strip()
+            and not str(query.get("fallback_reason", "")).strip()
+        ):
+            errors.append(
+                f"{where} needs selected_asset or fallback_reason before completing Stage 3"
+            )
 
     for node_id in sorted(search_nodes - query_nodes):
-        errors.append(f"node '{node_id}' requires a resolved asset query")
+        errors.append(f"node '{node_id}' requires a planned asset query")
 
     return errors
 
@@ -123,6 +129,11 @@ def validate_model(data: object) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("model", type=Path, help="path to figure-model.json")
+    parser.add_argument(
+        "--require-assets-resolved",
+        action="store_true",
+        help="require every asset query to select an asset or document a fallback (Stage 3 gate)",
+    )
     args = parser.parse_args()
 
     try:
@@ -134,7 +145,7 @@ def main() -> int:
         print(f"ERROR: invalid JSON: {exc}", file=sys.stderr)
         return 2
 
-    errors = validate_model(data)
+    errors = validate_model(data, require_assets_resolved=args.require_assets_resolved)
     if errors:
         print(f"MODEL VALIDATION FAILED for {args.model}:")
         for error in errors:
@@ -147,4 +158,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

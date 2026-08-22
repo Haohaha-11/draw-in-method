@@ -92,16 +92,24 @@ Do not start geometry until all of the following are true:
 - every physical/context entity has an asset strategy;
 - `brief.md` traceability points to model nodes or edges.
 
-## Named asset-resolution gate
+## Named asset planning and Stage 3 resolution gates
 
 For each node with `asset_strategy: search`:
 
 1. generate canonical English and Chinese names plus useful synonyms;
-2. search the local registry and native shape index;
-3. search user-authorized providers through their normal visible interface;
-4. compare at least the available plausible candidates for semantic fit,
-   visual family, SVG quality, editability, and provenance;
-5. select and register an asset, or write a concrete fallback reason.
+2. record candidate providers and reserve an appropriately sized geometry slot
+   during semantic preflight and Stage 1;
+3. after Stage 2 text is approved, search the local registry and native shape
+   index, then user-authorized providers through their normal visible interface;
+4. compare available plausible candidates for semantic fit, visual family, SVG
+   quality, editability, and provenance;
+5. during Stage 3, select and register an asset, or write a concrete fallback
+   reason.
+
+The normal `validate_figure_model.py` preflight accepts a planned query whose
+`selected_asset` and `fallback_reason` are still empty. At the end of Stage 3,
+run `validate_figure_model.py --require-assets-resolved <figure-model.json>`;
+that strict gate rejects every unresolved search.
 
 Do not use a primitive-built device, person, animal, laboratory object, or
 application icon merely because it is faster. Primitive composition remains
@@ -117,4 +125,3 @@ Before visual QA, ask:
 - Does every icon depict a named entity rather than decorate empty space?
 - If all icons were removed, would the computation still be understandable?
 - Do PPTX and Draw.io outputs preserve the same semantic graph?
-
