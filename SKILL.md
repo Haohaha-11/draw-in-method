@@ -18,7 +18,7 @@ Turn a paper, description, or reference image into a figure that is easy to deco
 - Distinguish prior/standard components from the paper contribution with one restrained accent color and an explicit legend.
 - Preserve the paper's terminology, tensor symbols, stage order, and training/inference distinction. Never invent results, dimensions, or module names.
 - Use rich vector assets for physical inputs, devices, subjects, experimental apparatus, application context, or outputs; keep model computation as native editable backend primitives and do not add icons decoratively.
-- Resolve every physical/context icon by semantic name. Search existing vector assets before composing one from primitives; record queries, candidates, provenance, and any fallback reason in `asset-ledger.md`.
+- Resolve every physical/context icon by semantic name. Use **external-provider-first** sourcing: prefer SVGs downloaded from Flaticon or Alibaba Iconfont (including previously cached assets with that provenance) before Iconify, generic native libraries, Lucide fallbacks, or primitive composition. Record queries, candidate-page URLs, previews, the downloaded file, author/collection, license state, selection reason, and any fallback reason in `asset-ledger.md`.
 - Apply the reusable quality rules in `references/general-quality-contract.md`; they encode paper-scale readability, compact composition, explicit connector semantics, rendered LaTeX, real-object asset boundaries, and export-driven review.
 - For neural-network, system-pipeline, encoder-decoder, fusion, or module architecture figures, enable **architecture figure mode** and read `references/architecture-figure-contract.md`. It overrides presentation-slide habits: no large headline, subtitle, footer explanation, or decorative card framing by default.
 - Use `references/staged-drawing-workflow.md` for user-visible production: after semantic preflight, build and review four stages in order—(1) architecture/base color/modules/arrows, (2) scientific text and annotations, (3) named SVG assets or generated transparent raster cutouts, and (4) full visual review and coordinated refinement. Stage 1 is itself a real four-snapshot sequence (1A regions, 1B modules, 1C main flow, 1D secondary relations); never jump directly from a blank canvas to a completed Stage 1 when the user is reviewing architecture. When the user requests step-by-step review, stop at the requested gate before advancing.
@@ -99,12 +99,12 @@ During preflight, record the canonical names and expected slots of required phys
 For every physical object, device, subject, experimental apparatus, application context, or output illustration in Stage 3:
 
 1. give the entity a canonical semantic name and Chinese/English aliases;
-2. search the local asset registry and native shape libraries;
-3. when needed and authorized, search Iconfont, Flaticon, or another provider through its normal visible UI;
-4. compare semantic fit, viewBox quality, visual family, editability, and provenance;
-5. import, sanitize, recolor, register, and embed the selected SVG;
+2. check whether the local registry already contains a semantically exact Flaticon/Iconfont download with complete provenance; reuse it when it still fits the selected visual family;
+3. otherwise search Flaticon and Alibaba Iconfont first through their normal visible UI, create a small candidate comparison, and download the selected SVG through the user's authorized browser/account flow;
+4. only after both preferred providers lack an adequate candidate, consider another authorized provider, a generic native icon library, or the bundled fallback family;
+5. compare semantic fit, viewBox quality, visual family, editability, and provenance, then import, sanitize, recolor, register, and embed the selected SVG;
 6. use image generation for a bespoke transparent-background raster cutout when a custom physical/context illustration is needed and vector editability is not required;
-7. compose a new icon from primitives only when no adequate asset exists, the user requests a custom symbol, or the entity is an abstract paper-specific mechanism.
+7. compose a new icon from primitives only when no adequate external asset exists, the user requests a custom symbol, or the entity is an abstract paper-specific mechanism. Record which preferred providers were searched and why every candidate was rejected.
 
 Read `references/vector-assets.md` and the Stage 3 rules in `references/staged-drawing-workflow.md`. An unexplained primitive-built physical icon is a quality-gate failure when a named asset search was feasible. Model computation, tensors, attention, operators, and paper-specific mechanisms should still use native editable primitives rather than decorative library icons.
 
@@ -112,7 +112,7 @@ For a framework view, choose a wide landscape canvas (roughly 1600–2200 × 850
 
 Define each edge before authoring it: source node, source port, target node, target port, direction, relation type (data/control/feedback/update/annotation), cardinality, route/lane, label, arrowhead requirement, and forbidden crossing zones. For architecture figures, approve a connector-only skeleton before adding dense text or assets. Prefer orthogonal or short straight routes; use waypoints and `exitX/exitY`/`entryX/entryY` when fan-in/out would stack or cross. Read `references/arrow-system.md` whenever arrows or connectors are a review focus. Keep real relations as connectors; use named SVG arrow assets for a coherent arrowhead/transition language and named SVG operator symbols for pruning, routing, aggregation, or detail expansion. Never use an oversized chevron as both a connector and a computation block.
 
-Use one dominant non-brand icon family per panel and record every used or rejected candidate in `asset-ledger.md`. Prefer previously imported local assets, then native library shapes, then provider search. Import user-downloaded Iconfont, Flaticon, Iconify, or local SVGs with `scripts/vector_assets.py`; sanitize and embed them so the final artifact has no render-time CDN dependency.
+Use one dominant non-brand icon family per panel and record every used or rejected candidate in `asset-ledger.md`. For physical/context imagery, prefer a coherent Flaticon or Alibaba Iconfont family; a previously imported asset counts only when its provider provenance is known. Do not silently substitute native shapes or self-built primitives merely because they are faster. Import downloaded SVGs with `scripts/vector_assets.py`; sanitize and embed them so the final artifact has no render-time CDN dependency.
 
 ### 5. Author the native editable backend
 

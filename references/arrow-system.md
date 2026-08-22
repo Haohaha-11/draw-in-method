@@ -22,9 +22,16 @@ Treat these as three different objects:
 An oversized chevron between blocks is rejected when a reader could interpret
 it as either the data-flow arrow or the computation itself.
 
-## Default visual family
+## Preferred and fallback visual families
 
-The skill bundles a small Lucide-derived set in `assets/vector-arrows/`:
+For visible arrow markers and operation symbols, search Flaticon or Alibaba
+Iconfont first when the requested style needs a richer family. Prefer a single
+pack that includes the required transition, funnel/filter, merge/split, and
+detail symbols. Download and register the actual SVG files; keep the relation
+topology as native connectors.
+
+The skill bundles a small Lucide-derived **fallback** set in
+`assets/vector-arrows/`:
 
 - `arrow-right.svg` — short main-path transition;
 - `arrow-down-right.svg` — controlled diagonal/detail transition when an
@@ -34,9 +41,10 @@ The skill bundles a small Lucide-derived set in `assets/vector-arrows/`:
 
 Lucide is an open-source SVG library under the ISC license; preserve the notice
 in `assets/vector-arrows/LICENSE.txt`. Recolor a copy for a project rather than
-changing the canonical bundled asset. Iconfont, Flaticon, Iconify, or another
-authorized provider may replace this family when it offers a better semantic
-and stylistic match. Record every selected asset and license state in
+changing the canonical bundled asset. Use this family only when the preferred
+Flaticon/Iconfont search has no suitable coherent result, the provider download
+is blocked and disclosed, or the user explicitly selects the minimalist style.
+Record every selected or rejected provider asset and license state in
 `asset-ledger.md`.
 
 ## Relation styles

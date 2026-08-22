@@ -192,10 +192,12 @@ one of the four visible drawing stages. Then follow
 2. **Scientific text and annotations** — add module names, tensor labels,
    equations, stage captions, panel labels, and only explanations that help the
    reader decode the method. Reflow modules before shrinking important text.
-3. **Named vector assets or transparent cutouts** — retrieve a semantically
-   matched local/native/Iconfont/Flaticon/Iconify SVG first. Image generation
-   may provide a transparent-background raster cutout when a bespoke context
-   illustration is appropriate, but that PNG is not an editable vector.
+3. **Named vector assets or transparent cutouts** — for physical/context
+   imagery, reuse a provenance-complete Flaticon/Iconfont asset or search and
+   download a matching SVG from Flaticon or Alibaba Iconfont first. Other
+   providers and native/basic symbols are documented fallbacks. Image
+   generation may provide a transparent-background raster cutout when a bespoke
+   context illustration is appropriate, but that PNG is not an editable vector.
 4. **Full visual review and coordinated refinement** — render the entire canvas
    and dense crops, then tune spacing, alignment, font sizes, color weight,
    connector clearance, and asset scale without changing approved semantics.

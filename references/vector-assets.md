@@ -14,21 +14,29 @@ plausible candidates, selection reason, and fallback reason in
 `asset-ledger.md`. This makes asset choice reproducible and prevents drawing a
 generic substitute before understanding what the entity represents.
 
-Choose the least complex source that preserves the intended meaning:
+Use source priority, not merely implementation convenience. For physical and
+context assets, the preferred visual source is Flaticon or Alibaba Iconfont.
+A cached local SVG counts as preferred only when its registry entry records one
+of those providers and the exact asset-page provenance. Choose sources in this
+order:
 
 1. Use native editable backend primitives for model computation, tensors, operators,
    attention, feature interaction, and paper-specific mechanisms.
-2. Search the local registry with `scripts/vector_assets.py search` using the
-   canonical name and aliases.
-3. Search `scripts/shapesearch.py` for native Draw.io engineering, cloud,
-   network, UML, and flowchart shapes.
-4. Use `scripts/aiicons.py` for an AI/LLM brand mark.
-5. If local search fails and the user has authorized provider search, use the
-   provider's normal visible UI to search Iconfont, Flaticon, Iconify, or the
-   user's preferred library. Prefer semantically exact SVGs from a consistent
-   family over the first superficially similar result.
-6. If no suitable asset exists, ask the user to download/copy an SVG or author
-   a small constrained SVG/primitive icon and record why retrieval failed.
+2. Search the local registry with `scripts/vector_assets.py search` for an
+   exact previously downloaded **Flaticon or Iconfont** asset using the
+   canonical name and aliases. Reuse it only if its style fits the current
+   figure.
+3. If no exact preferred-provider asset is cached, search Flaticon and Alibaba
+   Iconfont through their normal visible UI. Compare a small set of candidates
+   before downloading the selected SVG; do not treat a search-result thumbnail
+   or page link as the delivered asset.
+4. If both preferred providers lack an adequate candidate, consider Iconify or
+   another user-authorized external provider, then `scripts/shapesearch.py` for
+   native Draw.io engineering/cloud shapes. Use `scripts/aiicons.py` only for a
+   required AI/LLM brand mark.
+5. Use bundled Lucide assets, generic native symbols, or a constrained custom
+   primitive icon only as documented fallbacks. Record the provider queries,
+   rejected candidates, and concrete failure reason.
 
 Use rich vector assets mainly for inputs, physical devices, subjects,
 experimental apparatus, application contexts, and outputs. Do not put an icon
@@ -58,7 +66,26 @@ user's normal browser/account flow, then import the downloaded files. If an
 in-app browser with the user's signed-in session is available and the user asks
 for provider search, use the provider's normal visible UI to search and
 download/copy the selected SVG; do not bulk-acquire results or call private
-endpoints. Otherwise ask the user to supply the downloaded SVG or project pack.
+endpoints. If sign-in, CAPTCHA, plan selection, or a license confirmation blocks
+the actual download, pause at that point and ask the user to take over or supply
+the SVG/project pack. Never replace a blocked external download with a
+self-drawn icon without disclosing the fallback.
+
+## Preferred-provider candidate gate
+
+Before selecting a physical/context SVG, capture 2–6 plausible candidates when
+available. The figure workspace should record:
+
+- canonical entity and Chinese/English search terms;
+- provider, asset name/id, asset-page URL, author or pack, and visible license state;
+- a preview or screenshot sufficient to compare silhouette and detail level;
+- intended slot, orientation, color mode, and expected paper-scale size;
+- selection/rejection reason and the final downloaded local SVG path.
+
+Prefer one coherent pack or illustrator across a panel. Do not mix detailed
+multicolor Flaticon illustrations with sparse mono Iconfont glyphs merely to
+fill every slot. Search again or leave a computation block icon-free when the
+family mismatch would weaken the figure.
 
 Iconfont example:
 

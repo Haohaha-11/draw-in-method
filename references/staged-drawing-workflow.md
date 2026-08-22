@@ -139,15 +139,20 @@ domain recognition; they do not define the model's scientific graph.
 
 ### Asset decision order
 
-1. Search the local asset registry and native backend libraries by canonical
-   semantic name and aliases.
-2. Search or import user-authorized SVG assets from Iconfont, Flaticon,
-   Iconify, or another provider.
-3. Use image generation for a bespoke transparent-background bitmap cutout,
+1. Search the local registry for a semantically exact, provenance-complete SVG
+   previously downloaded from Flaticon or Alibaba Iconfont.
+2. If no exact cached asset fits, search Flaticon and Alibaba Iconfont first
+   through the normal visible UI, review a small candidate set, and download
+   the selected SVG through the user's authorized browser/account flow.
+3. Only when both preferred providers fail, search another authorized external
+   provider or a generic native icon library. Record the rejected candidates
+   and the reason for leaving the preferred providers.
+4. Use image generation for a bespoke transparent-background bitmap cutout,
    scene fragment, or illustrative context asset when no suitable vector
    exists or a custom appearance is required.
-4. Construct an asset from primitives only for an abstract paper-specific
-   mechanism, an explicit user request, or a documented retrieval failure.
+5. Construct an asset from primitives only for an abstract paper-specific
+   mechanism, an explicit user request, or a documented external-retrieval
+   failure. Never make this substitution silently.
 
 ### Image-generation boundary
 
@@ -172,6 +177,8 @@ For retrieved vectors:
 
 - inspect semantic fit, viewBox quality, visual family, license/provenance, and
   editability;
+- keep the downloaded SVG and its asset-page metadata together; a provider
+  thumbnail, screenshot, or hyperlink is not a substitute for the real asset;
 - sanitize scripts, external references, and unsafe content;
 - normalize color only when it preserves the asset's meaning;
 - embed the local SVG so the final figure has no render-time CDN dependency.
