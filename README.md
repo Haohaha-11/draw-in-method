@@ -1,190 +1,783 @@
 # Draw in Method
 
-Draw in Method turns a paper, method description, codebase, or visual reference into a clear, editable, camera-ready academic figure. It is designed for ML/AI papers in venues such as ICML, NeurIPS, and ICLR.
+> Semantic-first, native-editable academic figures for papers, methods, and technical systems.
+>
+> 从论文、方法描述、代码或参考图出发，先理解科学语义，再生成原生可编辑、可验证、适合论文发表的架构图与方法图。
 
-Draw in Method 可将论文、方法描述、代码库或视觉参考图转换为清晰、可编辑、适合论文发表的学术图。它面向 ICML、NeurIPS、ICLR 等机器学习与人工智能论文场景。
+`draw-in-method` 是一个面向 Codex 的学术制图 skill，主要服务于机器学习、人工智能、计算机视觉、多模态学习、信号处理和其他需要复杂方法图的研究场景。它不仅负责“把框画出来”，还会先分析图中真正的实体、关系、阶段、创新点和不确定信息，再将同一份语义模型转换为原生可编辑的 PowerPoint 或 Draw.io 图。
 
-## What it produces / 输出内容
+它特别适合以下任务：
 
-- Native editable PowerPoint: `<figure>.pptx`
-- Editable Draw.io source: `<figure>.drawio`
-- Preview and export files: PNG, SVG, PDF, or a local HTML preview when requested
-- A concise framework view showing `input → transformation → contribution → output`
-- An optional module-detail view showing operation order, tensor shapes, attention directions, or feature interactions
-- Evidence files such as `brief.md`, `visual-spec.md`, `layout-grid.md`, `asset-ledger.md`, and `defect-log.md` for non-trivial figures
+- 根据论文 Method、摘要、伪代码或项目代码绘制整体架构图；
+- 展开 Attention、Q/K/V、特征交互、路由、记忆库、损失或多分支模块；
+- 根据参考截图复现论文图，同时保留可编辑性；
+- 把已有草图、白板图或位图重构为清晰的论文级矢量图；
+- 生成可在 PowerPoint 中继续修改的原生 `.pptx`；
+- 生成可在 diagrams.net / Draw.io 中继续修改的 `.drawio`；
+- 为物理对象、设备、输入场景和输出应用接入 Iconfont、Flaticon、Iconify 或本地 SVG；
+- 通过语义校验、溢出检查和截图复查，减少错箭头、遮挡、假公式和无意义装饰。
 
-- PowerPoint 原生可编辑文件：`<figure>.pptx`
-- 可编辑的 Draw.io 源文件：`<figure>.drawio`
-- PNG、SVG、PDF 导出文件，或按需生成的本地 HTML 预览
-- 用于说明“输入 → 变换 → 核心创新 → 输出”的整体框架图
-- 可选的模块细节图，用于说明操作顺序、张量维度、注意力方向或特征交互
-- 对复杂图形生成 `brief.md`、`visual-spec.md`、`layout-grid.md`、`asset-ledger.md` 和 `defect-log.md` 等过程记录
+当前仓库处于个人迭代阶段，目标不是做通用商业信息图，而是形成一套可持续优化的“论文方法图工程流程”。
 
-The selected native backend (`.pptx` or `.drawio`) is the editable visual source of truth, while `figure-model.json` preserves the format-neutral semantic graph. Raster images are used only for an explicitly requested real-world input or context asset; model computation is redrawn with editable vector primitives.
+---
 
-所选原生后端（`.pptx` 或 `.drawio`）是可编辑的视觉源文件，`figure-model.json` 则保存与格式无关的语义图。真实物体或应用场景图片只应出现在明确需要的输入/上下文区域；模型计算过程应使用可编辑的矢量图形重新绘制。
+## 目录
 
-## Installation / 安装
+- [核心能力](#核心能力)
+- [为什么不是普通的自动画图工具](#为什么不是普通的自动画图工具)
+- [输出格式与可编辑性](#输出格式与可编辑性)
+- [安装](#安装)
+- [快速开始](#快速开始)
+- [工作流程](#工作流程)
+- [架构图模式](#架构图模式)
+- [矢量图标与资产检索](#矢量图标与资产检索)
+- [证据文件与语义模型](#证据文件与语义模型)
+- [命令行工具](#命令行工具)
+- [质量门槛](#质量门槛)
+- [项目结构](#项目结构)
+- [开发与测试](#开发与测试)
+- [能力边界](#能力边界)
+- [路线图](#路线图)
+- [许可与第三方说明](#许可与第三方说明)
 
-Copy the `draw-in-method` directory into a directory scanned by Codex skills. For a personal installation, the usual location is:
+---
 
-将 `draw-in-method` 目录复制到 Codex 会扫描的 skill 目录。个人安装通常放在：
+## 核心能力
 
-```text
-~/.codex/skills/draw-in-method/
+### 1. 语义优先，而不是形状优先
+
+绘图之前先建立科学语义：
+
+- 输入是什么，模态和形状是什么；
+- 哪些预处理对理解方法真正重要；
+- 模型由哪些阶段组成，顺序和依赖关系是什么；
+- 哪些模块是已有组件，哪些是论文提出的贡献；
+- 哪些分支只在训练阶段存在；
+- 哪些关系是数据流、控制流、反馈、更新或注释；
+- 哪些公式、维度或标签有来源，哪些内容无法从参考图中可靠辨认。
+
+所有重要节点和边首先进入 `figure-model.json`，绘图后端不能反过来决定科学含义。完整规则见 [semantic-first-workflow.md](references/semantic-first-workflow.md)。
+
+### 2. 原生可编辑 PowerPoint
+
+生成的 `.pptx` 以 PowerPoint 原生对象为主：
+
+- 文字保持为可编辑文本；
+- 模块保持为独立形状；
+- 数据流保持为连接符；
+- 重复模块可以作为逻辑组移动；
+- 输入图片、热力图和真实数据仅在其确实代表数据时使用栅格图；
+- 选中的 SVG 图标作为独立矢量对象嵌入，而不是把整张图压成一张图片。
+
+PowerPoint 特定要求见 [pptx-authoring.md](references/pptx-authoring.md)。
+
+### 3. 原生可编辑 Draw.io
+
+Draw.io 后端生成可维护的 XML：
+
+- 使用稳定的对象 ID；
+- 使用明确的坐标、容器、连接点和箭头；
+- 支持本地 SVG 嵌入，最终图不依赖运行时 CDN；
+- 支持结构校验、视觉质量检查和浏览器预览；
+- 适合版本控制、逐对象修改和 XML 级审查。
+
+### 4. 参考图理解与复现
+
+参考图复现不是简单描边。skill 会分开处理：
+
+- **内容证据**：模块名称、阶段顺序、公式、张量、箭头方向；
+- **结构证据**：分组、分支、汇合、重复模块和阅读顺序；
+- **风格证据**：字体、字号、色板、圆角、线宽、密度和留白；
+- **布局证据**：区域比例、基线、模块尺寸和连接通道；
+- **不确定证据**：模糊文字、无法确认的公式或可能被遮挡的边。
+
+无法确认的内容会进入不确定性记录，不会为了“看起来像论文”而被虚构。完整协议见 [reference-replication-protocol.md](references/reference-replication-protocol.md)。
+
+### 5. 搜索优先的矢量资产策略
+
+对于传感器、设备、人物、器官、实验装置、应用场景和其他真实对象，默认优先按名称查找已有矢量资产，而不是直接用几个基础形状拼一个低质量图标。
+
+当前工具链支持：
+
+- 本地 SVG；
+- Iconfont / 阿里巴巴矢量图标库导出的 SVG 或 symbol bundle；
+- Flaticon 下载的 SVG 或 ZIP；
+- Iconify / Iconify 风格本地资产；
+- 本地注册表检索、清洗、配色映射、自包含嵌入和来源记录。
+
+具体说明见 [vector-assets.md](references/vector-assets.md)。
+
+### 6. 可执行的质量验证
+
+项目包含多种验证脚本，可检查：
+
+- 语义模型中的未知节点或错误边；
+- 未完成的命名资产检索；
+- Draw.io XML 结构；
+- 文本溢出和模块重叠；
+- 箭头与模块碰撞；
+- 孤立标签、间距波动和颜色散乱；
+- 复现任务所需的证据文件、截图记录和自评分。
+
+---
+
+## 为什么不是普通的自动画图工具
+
+普通自动制图常见的问题是：
+
+- 根据几个关键词直接堆模块；
+- 用随机颜色制造“复杂感”；
+- 箭头穿过文字或连接到错误对象；
+- 把参考图中的 token、矩阵和立方体当成装饰复制；
+- 无法解释每个图形元素代表什么；
+- 输出只有 PNG，看起来像图，但无法继续编辑；
+- 为了塞下内容不断缩小字体；
+- 从模糊截图中猜测不存在的公式和维度。
+
+`draw-in-method` 的基本原则是：
+
+> Every visible element must have a named scientific meaning.
+>
+> 每一个可见元素都必须对应一个可以说清楚的科学含义。
+
+如果一个矩阵、token 条、颜色、图标或箭头无法回答“它代表什么”，就应当删除、改成明确标签，或记录为尚未解决的问题。
+
+---
+
+## 输出格式与可编辑性
+
+| 输出 | 主要用途 | 可编辑性 | 说明 |
+|---|---|---|---|
+| `.pptx` | PowerPoint 修改、汇报、论文图继续排版 | 原生文本、形状、连接符和分组可编辑 | 默认不会用一张全页图片冒充可编辑 PPT |
+| `.drawio` | diagrams.net 编辑、XML 版本控制 | 原生节点、容器、连接符和嵌入 SVG 可编辑 | 适合精细连线和结构维护 |
+| `.png` | 快速预览、截图审查 | 不可编辑 | 只作为派生预览，不是源文件 |
+| `.svg` | 论文排版、矢量导出 | 依导出方式而定 | 可以保持分辨率无关，但不等同于原生 PPT 对象 |
+| `.pdf` | 投稿预览、打印和归档 | 通常作为交付导出物 | 必须检查字体、公式和裁切 |
+| `figure-model.json` | 格式中立的科学语义 | 文本可编辑 | PPTX 和 Draw.io 可从同一语义模型构建 |
+
+需要同时输出 PPTX 与 Draw.io 时，两个后端应共同读取 `figure-model.json`；不应把一个后端的整张截图嵌入另一个后端后声称“两种格式都可编辑”。
+
+---
+
+## 安装
+
+### 前置条件
+
+- Codex 能够扫描个人 skill 目录；
+- Python 3.10+，用于本仓库的工具脚本；
+- 生成 PowerPoint 时，需要 Codex 的 Presentations 运行时；
+- 生成或预览 Draw.io 时，建议安装 diagrams.net 桌面版或可用的 Draw.io CLI；
+- 从私有仓库克隆时，需要已经登录的 GitHub CLI 或其他有权限的 Git 凭据。
+
+### 从私有 GitHub 仓库安装
+
+Windows PowerShell：
+
+```powershell
+gh auth login
+gh repo clone Haohaha-11/draw-in-method "$env:USERPROFILE\.codex\skills\draw-in-method"
 ```
 
-The package can also be used directly from its current path:
+macOS / Linux：
 
-也可以直接从当前路径使用：
-
-```text
-C:\Code\DrawioSkill\draw-in-method\
+```bash
+gh auth login
+gh repo clone Haohaha-11/draw-in-method "${CODEX_HOME:-$HOME/.codex}/skills/draw-in-method"
 ```
 
-After installation, invoke it with:
+如果已经安装，使用 fast-forward 更新：
 
-安装后使用以下方式触发：
+```powershell
+git -C "$env:USERPROFILE\.codex\skills\draw-in-method" pull --ff-only
+```
+
+安装或更新后，重新打开一个 Codex 任务，使 skill 发现缓存重新加载。成功加载后，可用名称为：
 
 ```text
 $draw-in-method
 ```
 
-## Quick start / 快速开始
+---
 
-Give the skill the scientific source and the desired figure type. Include a reference image when its style or composition should be followed.
+## 快速开始
 
-向 skill 提供论文内容或方法描述，并说明希望生成的图形类型。如果需要参考某张图的风格或构图，同时提供参考图片。
-
-### English prompt
+### 示例一：从方法描述生成可编辑 PPTX
 
 ```text
-Use $draw-in-method to create an editable, camera-ready figure for this method.
+使用 $draw-in-method 理解下面的方法，并生成原生可编辑 PowerPoint 架构图。
 
-Figure type: framework overview plus one module-detail panel.
-Input: multichannel time-series signal.
-Core contribution: an adaptive cross-channel interaction block.
-Output: prediction head and final task output.
-Requirements: landscape layout, readable at two-column width, muted semantic colors,
-one restrained accent color for the contribution, tensor shapes where informative,
-and a PNG preview next to the .drawio source.
-```
-
-### 中文提示词
-
-```text
-使用 $draw-in-method 为下面的方法生成可编辑、适合论文发表的结构图。
-
-图形类型：整体框架图 + 一个核心模块细节图。
+图形类型：整体架构 + 一个核心模块细节面板。
 输入：多通道时间序列信号。
+主要流程：时频编码 → 跨通道交互 → 多尺度聚合 → 预测头。
 核心创新：自适应跨通道交互模块。
-输出：预测头和最终任务输出。
-要求：横向布局，缩小到论文双栏宽度后仍清晰；使用低饱和度语义配色；
-用一个克制的强调色突出原创模块；只在有助于理解的位置标注张量维度；
-并在 .drawio 源文件旁生成 PNG 预览。
+输出：分类概率。
+
+要求：
+1. 先给出语义骨架和箭头关系；
+2. 不要添加大标题、页码和底部说明；
+3. 使用紧凑论文图样式；
+4. 文字、模块和箭头必须在 PPT 中分别可编辑；
+5. 交付 .pptx 和 PNG 预览。
 ```
 
-## Recommended workflow / 推荐工作流
+### 示例二：复现参考截图
 
-### 1. Extract the semantic graph / 提取语义图
+```text
+使用 $draw-in-method 复现这张论文方法图，输出原生可编辑 PPTX。
 
-First identify the real input, essential preprocessing, named stages, paper contribution, output, and any training-only branches. Do not add layers, dimensions, losses, or metrics that are not supported by the source.
+先理解图像中的模块、阶段、分组、主数据流和控制流，再开始绘图。
+保留参考图的字体层级、低饱和度配色、模块密度和箭头语法。
+模糊的公式不要猜，记录到 uncertainty ledger。
+现实对象图标先按名称搜索已有 SVG；模型计算使用原生矢量模块。
+```
 
-先确认真实输入、必要预处理、主要阶段、论文创新、最终输出，以及仅训练阶段存在的分支。不要凭空补充论文没有提供的层、维度、损失或指标。
+### 示例三：只做第一阶段线框
 
-### 2. Build a visual contract / 建立视觉规范
+```text
+使用 $draw-in-method 为下面的方法建立第一版线框。
 
-Use a supplied figure as a style reference only after extracting its font hierarchy, palette, spacing rhythm, corner radius, stroke width, arrow grammar, and panel composition. Without a reference, use the default contract in `references/figure-contract.md` and `references/topconf-paper-style.md`.
+这一步只输出：
+- figure-model.json；
+- 黑白模块布局；
+- 端口和箭头通道；
+- 一张线框预览。
 
-如果提供了参考图，应先提取字体层级、配色、间距节奏、圆角、线宽、箭头语法和面板构成，再开始绘图。没有参考图时，使用 `references/figure-contract.md` 和 `references/topconf-paper-style.md` 中的默认规范。
+暂时不要添加图标、正式配色、阴影或装饰。
+等我确认结构后再进入字体与配色阶段。
+```
 
-### 3. Optional ImageGen concept pass / 可选的 ImageGen 草图阶段
+### English example
 
-For difficult compositions or real-world input context, generate a clean concept image first (for example with image-2). Ask for a wide academic composition with no scientific text, equations, or tiny unlabeled blocks. Treat the image as a composition and visual-language reference; then redraw the semantic content as Draw.io vectors.
+```text
+Use $draw-in-method to understand this method and create a native editable PPTX figure.
 
-对于复杂构图或真实输入场景，可以先用图像生成模型（例如 image-2）生成草图。提示词应要求宽幅学术构图、无科学文字、无公式、无微小无标签模块。草图只用于参考构图和视觉语言，最终语义内容要重新用 Draw.io 矢量图绘制。
+Start with the semantic graph and a monochrome connector wireframe.
+Use one dominant left-to-right data path, explicit ports, compact paper-scale typography,
+and a separate module-detail panel only for the proposed mechanism.
+Do not invent unreadable equations or flatten the final slide into a full-canvas image.
+Deliver the editable PPTX and a rendered PNG preview.
+```
 
-### 4. Author the editable diagram / 绘制可编辑图
+---
 
-Use a concise framework view for the global story. Add a separate module view only when the internal mechanism matters. Show tensor shapes, Q/K/V, residual paths, or interaction axes only where they answer a reader question.
+## 工作流程
 
-整体框架图只展示关键阶段和模块关系。只有在内部机制确实重要时才增加模块细节图。张量维度、Q/K/V、残差路径或交互轴只在能够回答读者问题的位置出现。
+```mermaid
+flowchart LR
+    A[Paper / Method / Code / Reference] --> B[Semantic Brief]
+    B --> C[figure-model.json]
+    C --> D[Wireframe & Connector Routing]
+    D --> E[Typography & Labels]
+    E --> F[Palette & Named Assets]
+    F --> G{Native Backend}
+    G --> H[Editable PPTX]
+    G --> I[Editable Draw.io]
+    H --> J[Render & QA]
+    I --> J
+    J --> K[PNG / SVG / PDF]
+```
 
-Use the semantic palette consistently:
+### 阶段 1：语义骨架
 
-统一使用具有固定含义的语义配色：
+先创建 `brief.md` 和 `figure-model.json`，明确：
 
-| Meaning / 含义 | Fill / 填充 | Stroke / 描边 |
+- 节点、分组和阅读顺序；
+- 数据流、控制流、反馈、更新和注释边；
+- 创新模块、已有模块、训练分支和推理路径；
+- 需要按名称检索的物理或场景资产；
+- 来源不足或无法辨认的信息。
+
+在语义模型通过验证之前，不开始正式几何绘制。
+
+### 阶段 2：黑白线框和箭头
+
+只处理：
+
+- 画布比例；
+- 模块尺寸；
+- 对齐基线；
+- 输入、输出、控制和辅助端口；
+- 箭头通道与避让区域；
+- 分支、汇合、跳连和反馈的真实方向。
+
+这个阶段应当能在没有颜色和图标的情况下讲清楚方法。
+
+### 阶段 3：字体和科学标注
+
+加入：
+
+- 模块名称；
+- Stage / Group 标题；
+- 张量形状；
+- Q/K/V、操作顺序和关键公式；
+- 必要图例；
+- `(a) Overall Architecture`、`(b) Proposed Module` 等面板标签。
+
+优先删掉冗余文字、调整模块或拆分面板，不通过无限缩小字号解决拥挤。
+
+### 阶段 4：语义配色和命名资产
+
+- 一张图通常选择 3–5 种语义色；
+- 创新色保持稀缺；
+- 现实对象按名称检索矢量资产；
+- 模型计算使用原生可编辑形状；
+- 所有选用或放弃的资产记录在 `asset-ledger.md`；
+- 最终资产嵌入本地文件，不保留运行时 CDN 依赖。
+
+### 阶段 5：原生后端和质量检查
+
+- 生成 PPTX 或 Draw.io；
+- 渲染全画布预览；
+- 检查文字、公式、箭头、重叠、裁切和字体替换；
+- 验证代表性文字、模块、连接符和 SVG 可以独立选择；
+- 高保真任务执行多轮截图 → 缺陷清单 → 修复 → 重渲染。
+
+---
+
+## 架构图模式
+
+神经网络架构、系统流水线、编码器—解码器、多分支融合和模块原理图会启用专门的 architecture figure mode。完整规范见 [architecture-figure-contract.md](references/architecture-figure-contract.md)。
+
+### 默认禁止的演示稿元素
+
+除非用户明确要求汇报型页面，否则不添加：
+
+- 巨型 slide title；
+- 副标题和眉题；
+- 页码；
+- 底部大段 takeaway；
+- “Native Editable”等状态徽章；
+- 巨型圆角卡片、阴影、渐变或玻璃效果；
+- 只为填空而出现的图标、矩阵和 token 条。
+
+架构本身通常占画布的 85%–95%。
+
+### 字体
+
+- 英文默认：Times New Roman；兼容性或公式覆盖需要时使用 Cambria；
+- 中文默认：SimSun；不可用时使用 Noto Serif CJK SC；
+- 数学变量、张量符号和下标使用斜体；
+- 一张图保持一个字体家族；
+- 必要标注不应小于约 9 px 的 1600 × 900 等效字号。
+
+### 架构图色板
+
+以下色板来自当前约束，但单张图不应全部使用：
+
+| 语义角色 | 颜色 | 典型用途 |
 |---|---|---|
-| Input or raw signal / 输入或原始信号 | `#E8F2F5` | `#58727D` |
-| Existing component / 已有组件 | `#EAF0F6` | `#63758A` |
-| Feature or tensor transform / 特征或张量变换 | `#EDE9F4` | `#7B6A9A` |
-| Training/task head / 训练或任务头 | `#F4EEDC` | `#9A7B3F` |
-| Paper contribution / 论文创新 | `#F1D7D4` | `#B44948` |
-| Output or decision / 输出或决策 | `#E5F1E3` | `#5A8A55` |
+| 标准特征模块 | `#B4C6E7` | Encoder、Transformer、基础网络块 |
+| 次级分支 | `#D3D3FF` | 文本分支、辅助路径 |
+| 重建 / 上采样 | `#ADD7AC` | Decoder、Fusion、Upsample |
+| 退化 / 下采样 | `#E8B593` | Degradation、Downsample |
+| 上下文 / 输出 | `#FAE4D5` | 输出头、上下文区域 |
+| 暖色辅助模块 | `#FCDAB1` | Prompt、小型辅助操作 |
+| 中性面板 | `#FAF6E7` | Group 背景、模块内部 |
+| Attention / Query | `#A2B6FA` | Query、Attention、选中特征 |
+| Proposed / Learnable | `#EA717A` | 创新模块、可学习机制 |
+| 创新区域浅背景 | `#F7E7EA` | Proposed module 外层区域 |
 
-### 5. Validate and refine / 校验与精修
+普通描边和主箭头使用 `#1F1F1F` 或 `#30343B`。`#EA717A` 通常只用于一类真正的创新机制或被保留的重要证据。
 
-Run both validators before handoff:
+### 模块尺度基准
 
-交付前运行两个校验脚本：
+在 1600 × 900 画布上：
+
+| 对象 | 典型尺寸 |
+|---|---|
+| 普通模块 | 105–180 × 48–82 px |
+| 小型算子 | 48–92 × 28–50 px |
+| 核心创新模块 | 140–230 × 64–110 px |
+| Stage / Group | 280–680 × 150–430 px |
+| Token / Tensor 单元 | 14–24 px 方块 |
+
+这些数值是起点，不是绝对模板。真正约束是：相同模块保持一致，辅助模块不应比创新模块更抢眼，图在论文目标尺寸下仍能阅读。
+
+### 箭头语法
+
+每条边应记录源节点、源端口、目标节点、目标端口、关系类型、通道、标签和箭头要求。
+
+| 端口 | 默认含义 |
+|---|---|
+| 左侧 | 主要输入 |
+| 右侧 | 主要输出 |
+| 顶部 | 文本、Prompt、全局条件或控制 |
+| 底部 | 辅助分支、Loss、参数更新或反馈 |
+
+路由原则：
+
+- 主数据流尽量保持一条水平基线；
+- 普通边零折或一折；
+- Skip、Feedback 或长控制边最多两折；
+- 箭头不能穿过文字、模块或无关区域；
+- 并行通道必须保持稳定间距；
+- 四条以上扇入或扇出时使用总线、主干或明确汇合点；
+- 箭头连接语义端口，不连接标题条或装饰对象；
+- 先审核连接符骨架，再添加密集内容。
+
+---
+
+## 矢量图标与资产检索
+
+### 检索优先级
+
+1. 已经导入的本地资产注册表；
+2. PowerPoint / Draw.io 原生形状库；
+3. 用户提供或下载的 Iconfont、Flaticon、Iconify、本地 SVG；
+4. 在获得授权且确实需要时，通过对应网站的正常可见界面检索；
+5. 没有合适资产、用户明确要求自定义，或对象属于论文特有抽象机制时，才从基础矢量图元构造。
+
+### 为什么不默认自己拼图标
+
+现实对象通常具有明确的视觉比例、轮廓和领域特征。简单矩形、圆形和折线可以表达抽象计算，但很难稳定表达传感器、显微镜、病理切片、可穿戴设备或复杂实验装置。搜索优先可以提高：
+
+- 语义匹配度；
+- 轮廓质量；
+- 风格一致性；
+- 可缩放性；
+- 来源和授权可追踪性。
+
+### 本地导入示例
+
+查看矢量资产工具帮助：
 
 ```powershell
-python <skill-dir>\scripts\validate_visual_quality.py <figure>.drawio
-python <skill-dir>\scripts\validate_drawio.py <figure>.drawio
+python scripts/vector_assets.py --help
 ```
 
-Then inspect a canvas-only screenshot at the intended paper width. Confirm that panel titles are dominant, the contribution block is not smaller than standard helper modules, and the smallest required label remains readable. Fix overflow, crossings, orphan labels, uneven spacing, and excessive text before reducing font size.
+典型工作流包括导入 SVG、解析 Iconfont symbol bundle、处理 Flaticon ZIP、清理脚本和外部依赖、映射颜色、写入 `data/icon-registry.json`，然后生成可嵌入 Draw.io 或 PPTX 的本地资产。
 
-For the complete reusable review contract—including compact-canvas rules, rendered LaTeX checks, explicit arrow source/target semantics, transparent real-object asset boundaries, and the three-cycle export review—see [`references/general-quality-contract.md`](references/general-quality-contract.md).
+注意：skill 会记录来源信息，但不会自动替用户判断所有第三方资产的最终出版许可。使用 Iconfont、Flaticon 或其他提供商资产时，应根据具体图标、账户计划、作者要求和发布场景检查授权。
 
-随后在论文目标尺寸下检查只包含画布的截图。确认面板标题最醒目，原创模块的面积不小于普通辅助模块，最小的必要文字仍然可读。优先修复溢出、连线穿模、孤立标签、间距不均和文字冗余，不要先通过缩小字号解决拥挤。
+---
 
-For a local browser preview:
+## 证据文件与语义模型
 
-生成本地浏览器预览：
+对于复杂、需要复现或准备投稿的图，建议维护以下文件：
+
+| 文件 | 作用 |
+|---|---|
+| `brief.md` | 用户目标、受众、必须表达和明确排除的内容 |
+| `figure-model.json` | 节点、边、分组、阅读顺序、资产需求和不确定性 |
+| `visual-spec.md` | 字体、色板、尺寸、线宽、圆角和视觉层级 |
+| `layout-grid.md` | 画布、区域框、基线、重复模块尺寸和连接通道 |
+| `asset-ledger.md` | 命名检索、候选资产、来源、选择理由和回退原因 |
+| `defect-log.md` | 截图复查、缺陷、修复、红队检查和自评分 |
+
+初始化一个非破坏性的图形工作区：
 
 ```powershell
-python <skill-dir>\scripts\serve_drawio_preview.py <figure>.drawio --port 8765
+python scripts/init_figure_workspace.py <work-dir> --title "Method Overview"
 ```
 
-For a reusable evidence workspace:
+脚本只创建缺失文件，不覆盖已经存在的 brief、视觉规范或缺陷记录。
 
-创建可复用的图形证据工作区：
+### `figure-model.json` 最小示例
+
+```json
+{
+  "schema_version": "1.0",
+  "title": "Method overview",
+  "primary_output": "pptx",
+  "reading_order": "left-to-right",
+  "nodes": [
+    {
+      "id": "input_signal",
+      "label": "Input signal",
+      "role": "input",
+      "kind": "physical",
+      "group": "overview",
+      "asset_strategy": "raster-context"
+    },
+    {
+      "id": "proposed_block",
+      "label": "Adaptive Interaction Block",
+      "role": "proposed",
+      "kind": "module",
+      "group": "overview"
+    }
+  ],
+  "edges": [
+    {
+      "id": "input_to_proposed",
+      "source": "input_signal",
+      "target": "proposed_block",
+      "relation": "data",
+      "label": ""
+    }
+  ],
+  "groups": [
+    {
+      "id": "overview",
+      "label": "Overall Architecture",
+      "members": ["input_signal", "proposed_block"]
+    }
+  ],
+  "asset_queries": [],
+  "uncertainties": []
+}
+```
+
+---
+
+## 命令行工具
+
+以下命令默认在仓库根目录运行。
+
+### 验证语义模型
 
 ```powershell
-python <skill-dir>\scripts\init_figure_workspace.py <work-dir> --title "Your Figure Title"
+python scripts/validate_figure_model.py <work-dir>\figure-model.json
 ```
 
-## Choosing a figure type / 图形类型选择
+检查未知端点、重复 ID、缺失字段和未解决的命名资产检索。
 
-| Type / 类型 | Use when / 适用场景 | Typical content / 典型内容 |
-|---|---|---|
-| Framework overview / 整体框架图 | The reader needs the global story first / 读者首先需要理解总体逻辑 | 5–8 stages, main data flow, contribution location, final output |
-| Module detail / 模块细节图 | The novelty depends on internal mechanics / 创新点依赖内部机制 | Operation order, tensor shapes, Q/K/V, feature-interaction direction |
-| Multi-panel figure / 多面板图 | One canvas would become crowded / 单一画布会过于拥挤 | (a) overview, (b) proposed module, optional training or downstream panel |
-| Reference replication / 参考图复刻 | Style and layout must follow a supplied figure / 需要沿用给定参考图的风格和构图 | Extracted style contract plus a vector redraw |
+### 验证 Draw.io
 
-## Package structure / 目录结构
+```powershell
+python scripts/validate_visual_quality.py <figure>.drawio
+python scripts/validate_drawio.py <figure>.drawio
+```
+
+第一项关注视觉质量和布局风险，第二项关注 Draw.io XML 结构。交付前应解决全部 `FAIL`，并逐项审查 warning。
+
+### 验证复现证据
+
+```powershell
+python scripts/validate_replication_artifacts.py <work-dir>
+python scripts/validate_replication_artifacts.py <work-dir> --require-screenshot-review
+```
+
+### 启动本地 Draw.io 预览
+
+```powershell
+python scripts/serve_drawio_preview.py <figure>.drawio --port 8765
+```
+
+### 生成浏览器回退 URL
+
+```powershell
+python scripts/encode_drawio_url.py <figure>.drawio
+```
+
+### 修复 Draw.io PNG 导出尾部
+
+```powershell
+python scripts/repair_png.py <figure>.drawio.png
+```
+
+### 搜索本地 Draw.io 形状
+
+```powershell
+python scripts/shapesearch.py "sensor"
+```
+
+### 分布连接端口
+
+```powershell
+python scripts/edgeports.py <figure>.drawio
+```
+
+更多脚本说明可从各脚本的 `--help` 获取。
+
+---
+
+## 质量门槛
+
+### 语义门槛
+
+- 每个必须出现的节点都有稳定 ID；
+- 每条边都有明确源和目标；
+- 创新点、已有组件、训练分支和推理路径没有混淆；
+- 无来源的维度、指标、损失和公式不会被添加；
+- 需要现实对象图标时，命名检索已经完成或记录了可靠的回退原因。
+
+### 视觉门槛
+
+- 论文目标尺寸下仍能阅读；
+- 没有非预期重叠、裁切和文本溢出；
+- 箭头不会穿过文字或模块；
+- 箭头方向、扇入扇出和汇合点没有歧义；
+- 相同模块使用相同尺寸和样式；
+- 颜色具有稳定语义，而不是随机装饰；
+- 图例不占用主数据流；
+- 画布贴合构图，没有大面积无意义留白。
+
+### 可编辑性门槛
+
+PowerPoint 中至少应能分别选择和修改：
+
+- 一段科学文字；
+- 一个普通模块；
+- 一个创新模块；
+- 一条主数据连接符；
+- 一个重复模块组；
+- 一个独立矢量图标。
+
+Draw.io 中应能分别编辑节点、容器、连接符、标签和嵌入资产。
+
+### 渲染门槛
+
+- 所有最终页面都已经渲染；
+- 检查的是全画布截图，不是缩得很小的编辑器或浏览器截图；
+- 公式在导出物中显示为公式，而不是 LaTeX 源字符串；
+- 最新一次验证发生在最后一次写入和渲染之后；
+- 高保真或投稿关键图完成多轮截图驱动修复。
+
+完整通用规则见 [general-quality-contract.md](references/general-quality-contract.md)。
+
+---
+
+## 项目结构
 
 ```text
 draw-in-method/
-├── SKILL.md                         # Core agent instructions / 核心 skill 指令
-├── README.md                        # This guide / 本使用说明
-├── agents/openai.yaml               # UI metadata / 界面元数据
-├── references/                      # Style, XML, and review guidance / 规范与校验文档
-├── scripts/                         # Preview, validation, layout utilities / 工具脚本
-└── data/                            # Local shape and icon indexes / 本地形状与图标索引
+├── SKILL.md
+├── README.md
+├── agents/
+│   └── openai.yaml
+├── references/
+│   ├── architecture-figure-contract.md
+│   ├── figure-contract.md
+│   ├── general-quality-contract.md
+│   ├── pptx-authoring.md
+│   ├── reference-replication-protocol.md
+│   ├── semantic-first-workflow.md
+│   ├── vector-assets.md
+│   ├── xml-authoring.md
+│   └── ...
+├── scripts/
+│   ├── init_figure_workspace.py
+│   ├── validate_figure_model.py
+│   ├── validate_replication_artifacts.py
+│   ├── validate_visual_quality.py
+│   ├── validate_drawio.py
+│   ├── vector_assets.py
+│   ├── serve_drawio_preview.py
+│   └── ...
+├── data/
+│   ├── icon-registry.json
+│   ├── lobe-icons.json
+│   └── shape-index.json.gz
+└── tests/
+    └── test_vector_assets.py
 ```
 
-## Design principles / 设计原则
+重要入口：
 
-- Clarity before decoration. / 清晰度优先于装饰。
-- Show the contribution with one restrained accent color. / 用一个克制的强调色突出论文创新。
-- Keep real images in input/context regions. / 将真实图片限制在输入或上下文区域。
-- Use vectors for model computation. / 模型计算过程使用矢量图形表达。
-- Preserve scientific semantics; never invent missing facts. / 保留科学语义，不虚构缺失事实。
-- Optimize for two-column readability, not editor zoom. / 以论文双栏尺寸的可读性为最终标准，而不是编辑器缩放效果。
-- Fit the canvas to the composition and remove redundant whitespace. / 让画布贴合实际构图，删除冗余留白。
-- Make every connector and symbol semantically explicit. / 确保每条连线和每个符号的语义都明确。
-- Review exported artifacts iteratively, not only the editable canvas. / 反复检查导出物，而不只检查可编辑画布。
+- [SKILL.md](SKILL.md)：Codex 实际加载的核心决策和工作流；
+- [architecture-figure-contract.md](references/architecture-figure-contract.md)：架构图字体、色板、尺寸和箭头合同；
+- [pptx-authoring.md](references/pptx-authoring.md)：PowerPoint 原生可编辑后端；
+- [semantic-first-workflow.md](references/semantic-first-workflow.md)：语义图和不确定性处理；
+- [vector-assets.md](references/vector-assets.md)：Iconfont、Flaticon、Iconify 和本地 SVG；
+- [reference-replication-protocol.md](references/reference-replication-protocol.md)：参考图复现和截图证据；
+- [THIRD_PARTY_NOTICES.md](references/THIRD_PARTY_NOTICES.md)：第三方说明。
+
+---
+
+## 开发与测试
+
+### Skill 结构校验
+
+如果本机包含 Codex 的 `skill-creator`：
+
+```powershell
+python <skill-creator-dir>\scripts\quick_validate.py .
+```
+
+### 单元测试
+
+Windows 中文环境建议显式启用 UTF-8，使测试启动的子 Python 进程也使用 UTF-8：
+
+```powershell
+$env:PYTHONUTF8 = "1"
+python -X utf8 -B -m unittest discover -s tests -p "test_*.py" -v
+```
+
+macOS / Linux：
+
+```bash
+PYTHONUTF8=1 python -X utf8 -B -m unittest discover -s tests -p 'test_*.py' -v
+```
+
+当前测试覆盖：
+
+- Flaticon ZIP 中多色 SVG 的保留；
+- Iconfont symbol bundle 解析；
+- 本地 SVG 导入、搜索、嵌入和验证。
+
+### 提交前建议
+
+```powershell
+python <skill-creator-dir>\scripts\quick_validate.py .
+$env:PYTHONUTF8 = "1"
+python -X utf8 -B -m unittest discover -s tests -p "test_*.py" -v
+git status --short
+```
+
+---
+
+## 能力边界
+
+### 不会把模糊内容当成事实
+
+参考截图中无法辨认的公式、数字、维度和模块名称不会被静默猜测。它们会被简化、标记为不确定，或等待用户补充论文原文。
+
+### 不把复杂等同于专业
+
+更多模块、颜色、token 和矩阵不一定更专业。skill 会优先删除没有明确含义的视觉元素。
+
+### 不保证第三方图标自动获得出版许可
+
+资产工具负责清理、记录和嵌入，但具体资产能否用于论文、商业项目或公开发布，仍取决于提供商、作者和账户许可。
+
+### SVG 的“可编辑”具有层级
+
+嵌入 PowerPoint 的 SVG 通常可以独立移动、缩放和整体着色，但不同 PowerPoint 版本未必允许直接编辑其每一条内部路径。需要路径级编辑时，应使用原生形状或经过用户确认的形状转换流程。
+
+### 栅格图只用于真实数据或上下文
+
+输入照片、显微图、热力图和实验结果可以是栅格图；模型架构本身不应被压成一张全页位图。
+
+### Image generation 不是科学来源
+
+图像生成可以用于探索构图或生成真实输入场景素材，但不能替代论文提供的科学结构、公式、数据和结论。
+
+---
+
+## 路线图
+
+当前计划继续优化：
+
+- [ ] 更稳定的分阶段 PPTX 中间预览与用户确认机制；
+- [ ] 连接符通道自动规划、端口分配和交叉最小化；
+- [ ] 对 PowerPoint 原生对象的更细粒度可编辑性检查；
+- [ ] 更强的公式渲染、字体回退和跨平台一致性；
+- [ ] Iconfont、Flaticon 和本地资产注册表的统一检索体验；
+- [ ] 可复用的论文架构布局模板与几何回归测试；
+- [ ] 基于参考图的字体、模块尺寸和色板自动测量辅助；
+- [ ] 更系统的论文双栏尺寸可读性评分；
+- [ ] 为典型架构、模块细节和多面板图增加经过验证的示例。
+
+路线图表示后续方向，不代表当前版本已经实现这些能力。
+
+---
+
+## 许可与第三方说明
+
+当前仓库没有附带对外公开复用的顶层许可证。作为私有个人仓库使用时，请不要默认将仓库整体视为开源许可内容。
+
+部分数据索引或工具代码可能包含独立来源和许可说明，详见：
+
+- [references/THIRD_PARTY_NOTICES.md](references/THIRD_PARTY_NOTICES.md)
+- [data/SHAPE-INDEX-NOTICE.md](data/SHAPE-INDEX-NOTICE.md)
+
+从 Iconfont、Flaticon、Iconify 或其他提供商导入的具体资产，应单独记录来源、作者和许可状态。
+
+---
+
+## English summary
+
+`draw-in-method` is a Codex skill for understanding, designing, and replicating camera-ready academic figures. It uses a semantic-first figure model, explicit connector semantics, named vector-asset retrieval, native editable PowerPoint or Draw.io backends, and rendered-preview validation.
+
+The project is intentionally optimized for research-method figures rather than generic presentation infographics. Its central rule is simple: understand the method first, make every visible element scientifically meaningful, and treat the editable native artifact—not a flattened screenshot—as the source of truth.
