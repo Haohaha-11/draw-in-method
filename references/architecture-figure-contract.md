@@ -42,17 +42,20 @@ Starting sizes on a 1600 × 900 canvas:
 
 | Role | Size | Weight |
 |---|---:|---|
-| Optional figure/panel heading | 17–21 px | bold |
-| Stage or group heading | 15–18 px | bold |
-| Main/proposed module | 14–17 px | bold or bold italic |
-| Standard module/operator | 12–15 px | regular or bold |
-| Tensor/equation/branch label | 10–13 px | regular/italic |
-| Legend or secondary annotation | 9–12 px | regular |
+| Optional figure/panel heading | 20–24 px | bold |
+| Stage or group heading | 18–21 px | bold |
+| Main/proposed module | 17–20 px | bold or bold italic |
+| Standard module/operator | 15–18 px | regular or bold |
+| Tensor/equation/branch label | 12–14 px | regular/italic |
+| Legend or secondary annotation | 11–13 px | regular |
 
 Do not solve crowding by shrinking required text below 9 px. Shorten redundant
 copy, enlarge the relevant module, or split overview and detail views instead.
 Text should normally occupy no more than 65–75% of a module's width, leaving
-visible internal padding.
+visible internal padding. Use the lower end only when a dense source figure or
+long notation genuinely requires it. During screenshot review, also inspect the
+whole figure at approximately 50% scale: panel headings, routine module names,
+and the main contribution must remain readable without zooming into a crop.
 
 ## 3. Architecture palette
 
@@ -86,11 +89,11 @@ Starting dimensions on a 1600 × 900 canvas:
 
 | Object | Typical size |
 |---|---|
-| Standard module | 105–180 × 48–82 px |
+| Standard module | 120–190 × 56–96 px |
 | Small operator cell | 48–92 × 28–50 px |
-| Proposed/key module | 140–230 × 64–110 px |
+| Proposed/key module | 160–240 × 80–120 px |
 | Stage/group container | 280–680 × 150–430 px |
-| Tensor/token cell | 14–24 px square |
+| Tensor/token cell | 16–26 px square |
 
 - Internal padding: 8–14 px. Gap between adjacent modules: 20–42 px. Gap
   between stages: 42–80 px. Repeated modules must use identical dimensions.
@@ -100,6 +103,28 @@ Starting dimensions on a 1600 × 900 canvas:
   presentation cards. Helper cells must not visually outweigh the contribution.
 - Tensor stacks, cubes, and token strips are compact data encodings, not
   decoration. Show only enough repetition to communicate dimensionality.
+
+### Density gate
+
+Outer-frame occupancy is not enough. A panel can fill the canvas and still feel
+empty when its modules occupy only a narrow band. Use these as diagnostic
+starting points, not quotas:
+
+- after excluding the panel heading and intentional connector lanes, the
+  content envelope should normally use at least about 55% of the available
+  panel height and 65% of its width;
+- a detail panel with three modules should not retain an unused band larger
+  than the modules themselves unless that band is reserved for real branches,
+  tensors, or annotations;
+- when a draft feels sparse, first reduce container depth and panel gaps, then
+  enlarge module families and scientific glyphs together; do not stretch only
+  one box or add decorative filler;
+- preserve at least 12–18 px connector and label clearance while increasing
+  density. Dense means information-rich, not congested.
+
+Reject a checkpoint when the panel frames are visually dominant, when module
+labels become readable only in a crop, or when more than roughly one third of a
+detail panel is unassigned whitespace without a semantic reason.
 
 ## 5. Connector grammar
 

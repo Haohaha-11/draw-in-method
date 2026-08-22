@@ -50,6 +50,11 @@ such as `STAGE 1A` inside the paper figure canvas.
 - Add repeated modules with identical dimensions and spacing.
 - Compare the visual weight of proposed versus helper modules.
 - Review alignment, gaps, padding, branch capacity, and unused whitespace.
+- Inspect a full-canvas thumbnail as well as a crop. If routine module names
+  disappear at roughly 50% scale, increase the type family and its modules
+  before adding more content.
+- Apply the density gate from `architecture-figure-contract.md`; large empty
+  bands inside a panel are a layout defect, not automatically "clean design."
 
 ### Checkpoint 1C — main connector skeleton
 
@@ -193,6 +198,8 @@ errors with cosmetic nudges.
 Review:
 
 - global balance, optical centering, and whitespace distribution;
+- content-envelope occupancy inside every panel, especially whether large
+  containers visually outweigh the mechanisms they contain;
 - module size consistency and contribution/helper hierarchy;
 - all arrow endpoints, directions, crossings, bends, lanes, and arrowheads;
 - text hierarchy, font substitution, wrapping, clipping, and paper-scale size;
@@ -207,6 +214,10 @@ Make coordinated micro-adjustments to spacing, alignment, module dimensions,
 font sizes, label positions, and asset scale. Re-render after each correction
 set. If the review finds an incorrect relation, missing stage, or fundamentally
 wrong module hierarchy, return to Stage 1; do not keep nudging Stage 4 objects.
+For sparse drafts, use this correction order: compress unused panel depth and
+inter-panel gaps; enlarge repeated module families; enlarge tensors, equations,
+and legends; finally rebalance connector lanes. Avoid a global uniform scale-up
+that creates edge crowding while leaving the internal hierarchy unchanged.
 
 For camera-ready, reference-replication, or user-critical figures, complete the
 required screenshot-driven defect cycles and red-team audit before handoff.
