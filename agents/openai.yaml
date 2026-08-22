@@ -1,0 +1,4 @@
+interface:
+  display_name: "Draw in Method"
+  short_description: "Understand and create editable PPTX or Draw.io research figures"
+  default_prompt: "Use $draw-in-method to understand this paper, method, or reference image, resolve named vector assets, and create a camera-ready editable PPTX or Draw.io figure."
