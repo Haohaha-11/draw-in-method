@@ -28,6 +28,7 @@
 - [输出格式与可编辑性](#输出格式与可编辑性)
 - [安装](#安装)
 - [快速开始](#快速开始)
+- [Example 1: SAFormer editable replication](#example-1-saformer-editable-replication)
 - [工作流程](#工作流程)
 - [架构图模式](#架构图模式)
 - [2.5D 模块与层叠张量](#25d-模块与层叠张量)
@@ -262,6 +263,30 @@ architecture is approved.
 Do not invent unreadable equations or flatten the final slide into a full-canvas image.
 Deliver the editable PPTX and a rendered PNG preview.
 ```
+
+---
+
+## Example 1: SAFormer editable replication
+
+`Example 1` 是当前版本冻结的第一个完整实例：根据一张多模态图像融合论文架构参考图，先恢复系统语义和连接关系，再用 PowerPoint 原生对象完成紧凑的可编辑复现。它代表本仓库现阶段的 **structured academic architecture** 基线，不与后续手绘、多面板或漫画式视觉方向混合。
+
+[![Example 1 — final PowerPoint render](examples/example-1-saformer/example-1-saformer-preview.png)](examples/example-1-saformer/example-1-saformer-editable.pptx)
+
+该实例验证了以下能力：
+
+- 双输入、多阶段、双分支、跨阶段文本条件和双输出的语义重建；
+- 主数据流、文本条件、融合、退化参数和输出路径的独立连接符表达；
+- SAFormer Block、层叠特征板和分支张量的可编辑 2.5D 表达；
+- 低饱和蓝、绿、紫、橙色板与紧凑论文图字号层级；
+- ChatGPT、Human、Flame 和 Chart 等独立矢量资产与原生计算模块的组合；
+- 最终 PPT 独立渲染以及 slide-canvas overflow 检查。
+
+归档文件：
+
+- [原生可编辑 PowerPoint](examples/example-1-saformer/example-1-saformer-editable.pptx)
+- [最终 PPT 渲染截图](examples/example-1-saformer/example-1-saformer-preview.png)
+
+验证状态：单页 PPTX，独立重新渲染成功，未检测到超出画布的对象。后续新的视觉风格应作为独立 Example 增加，不反向修改这一冻结实例的视觉基线。
 
 ---
 
