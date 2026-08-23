@@ -29,6 +29,7 @@
 - [安装](#安装)
 - [快速开始](#快速开始)
 - [Example 1: SAFormer editable replication](#example-1-saformer-editable-replication)
+- [Example 2: MAS2 hand-drawn multi-panel replication](#example-2-mas2-hand-drawn-multi-panel-replication)
 - [工作流程](#工作流程)
 - [架构图模式](#架构图模式)
 - [2.5D 模块与层叠张量](#25d-模块与层叠张量)
@@ -287,6 +288,52 @@ Deliver the editable PPTX and a rendered PNG preview.
 - [最终 PPT 渲染截图](examples/example-1-saformer/example-1-saformer-preview.png)
 
 验证状态：单页 PPTX，独立重新渲染成功，未检测到超出画布的对象。后续新的视觉风格应作为独立 Example 增加，不反向修改这一冻结实例的视觉基线。
+
+---
+
+## Example 2: MAS2 hand-drawn multi-panel replication
+
+`Example 2` 冻结了第二条视觉路线：参考论文中的 MAS² 多智能体系统图，将漫画式手绘轮廓、紧凑多面板叙事、协作树、2.5D 数据集圆柱和语义角色资产组合为原生可编辑 PowerPoint。它不是对 `Example 1` 的覆盖，而是独立的 **hand-drawn multi-panel academic figure** 基线。
+
+[![Example 2 — MAS² hand-drawn PowerPoint render](examples/example-2-mas2-handdrawn/example-2-mas2-handdrawn-preview.png)](examples/example-2-mas2-handdrawn/example-2-mas2-handdrawn-editable.pptx)
+
+该实例用七页渐进快照保留了真实制作顺序：
+
+1. **1A Regions**：建立 `(a)`、`(b)`、`(c)` 三个语义面板及背景色域；
+2. **1B Modules**：加入角色槽位、四个 MAS 阶段、协作树层级和数据集／训练区域；
+3. **1C Main Flow**：加入跨阶段主流程、树到数据集的主映射和面板间传递；
+4. **1D Secondary Relations**：加入角色关系、阶段内部关系、反馈和 Rectify 双向交互；
+5. **Stage 2 Text**：补充任务描述、角色、公式、路径信用和训练结果等科学文字；
+6. **Stage 2.5 Hand-drawn Contours**：将关键框、节点和 2.5D 圆柱统一为不规则但克制的手绘线条；
+7. **Stage 3 Role Assets**：在身份槽位加入同一家族的外部角色素材，并保留 OpenAI SVG 标志。
+
+该实例重点验证了：
+
+- 手绘风格不是简单替换字体，而是对框线、节点轮廓、箭头、圆柱边缘和重复模块使用一致的轻微不规则形态；
+- 箭头仍然具有明确语义，手绘外观不会牺牲源、目标、方向、反馈或面板间映射；
+- 三个面板共享字体、色板、描边重量和身份系统，同时保持各自不同的信息密度；
+- 协作树、路径信用传播和 in-time rectification 使用可编辑节点与连接符；
+- 数据集使用独立顶面、正面与底部边缘构成的 2.5D 圆柱，而不是整块位图；
+- Generator、Implementor、Rectifier 分别使用语义匹配的 scientist、programmer、detective 角色，并在角色关系、阶段头部和 meta-agent 结果中维持一致身份；
+- 普通计算节点保持原生简洁图形，不因为接入图标库而被装饰性素材淹没。
+
+### 可编辑性和第三方素材说明
+
+图中的面板、文字、普通节点、手绘框线、连接符、协作树、训练条和 2.5D 圆柱均为原生 PowerPoint 对象。OpenAI 标志以 SVG 嵌入。三个角色头像来自同一 Flaticon `shin_icons` 彩色线稿家族，当前归档中以独立透明 PNG 对象嵌入，因此可以移动、缩放、裁切和替换，但不能像 SVG 路径一样修改内部线条；该限制不影响其余架构对象的原生可编辑性。
+
+角色素材来源：
+
+- [Scientist / Generator](https://www.flaticon.com/free-icon/scientist_11130679)
+- [Programmer / Implementor](https://www.flaticon.com/free-icon/programmer_11128652)
+- [Detective / Rectifier](https://www.flaticon.com/free-icon/detective_11128614)
+- [Flaticon license](https://www.flaticon.com/license/license.pdf)
+
+归档文件：
+
+- [七页渐进式原生可编辑 PowerPoint](examples/example-2-mas2-handdrawn/example-2-mas2-handdrawn-editable.pptx)
+- [Stage 3 最终 PPT 渲染截图](examples/example-2-mas2-handdrawn/example-2-mas2-handdrawn-preview.png)
+
+验证状态：7 页全部独立重新渲染并逐页检查；PowerPoint overflow 测试通过；严格 `figure-model.json --require-assets-resolved` 校验通过；最终页包含 221 个原生形状、80 个文本框和 11 个独立图片实例。该实例现作为 Example 2 冻结，后续的整体视觉精修或第三条风格路线应继续使用新的阶段文件或独立 Example。
 
 ---
 
@@ -782,6 +829,13 @@ draw-in-method/
 │   ├── icon-registry.json
 │   ├── lobe-icons.json
 │   └── shape-index.json.gz
+├── examples/
+│   ├── example-1-saformer/
+│   │   ├── example-1-saformer-editable.pptx
+│   │   └── example-1-saformer-preview.png
+│   └── example-2-mas2-handdrawn/
+│       ├── example-2-mas2-handdrawn-editable.pptx
+│       └── example-2-mas2-handdrawn-preview.png
 ├── assets/
 │   └── vector-arrows/       # bundled Lucide arrow/operator SVG family
 └── tests/
