@@ -11,10 +11,11 @@ Treat these as three different objects:
 1. **Relation connector** — the semantic edge between named ports. It carries
    route, direction, relation type, and optional label. Keep it as a native
    PowerPoint/Draw.io connector whenever possible.
-2. **Arrow marker or short transition motif** — a small SVG from one consistent
-   vector family. It may replace an unattractive built-in arrowhead or occupy a
-   short straight gap, but it must align with the connector and never create a
-   second contradictory direction.
+2. **Arrow marker or short transition motif** — an optional small SVG from one
+   consistent vector family. The default is a continuous native connector with
+   a restrained arrowhead. Use an SVG marker only when it materially improves
+   a supplied visual reference; never repeat circular/boxed arrow pictures in
+   every gap or visually break one continuous flow into disconnected badges.
 3. **Operation symbol** — a compact named SVG such as funnel/filter, merge,
    split, aggregation, routing, or zoom/detail. It is a node with input and
    output connectors, not an arrow.
@@ -22,13 +23,61 @@ Treat these as three different objects:
 An oversized chevron between blocks is rejected when a reader could interpret
 it as either the data-flow arrow or the computation itself.
 
+## Why a PowerPoint arrow often does not match the reference
+
+Do not treat `endArrowType` as a complete arrow style. A reference exported
+from Illustrator, Visio, TikZ, SVG, or a paper authoring tool may use a custom
+marker whose silhouette and proportions do not exist among PowerPoint's
+defaults. PowerPoint and independent renderers can also scale the built-in
+arrowhead differently from the shaft.
+
+The visible mismatch usually comes from one or more of these variables:
+
+- arrowhead silhouette: narrow triangle, broad triangle, stealth, open V, or
+  custom shape;
+- head length and width relative to the shaft;
+- shaft width, cap, join, and whether the shaft visually enters the head;
+- gap between the visible head tip and the target border;
+- route geometry and bend radius, especially for a long curved callout;
+- dash length/space and phase;
+- stroke color and opacity;
+- scaling introduced by the PPTX renderer or export resolution.
+
+When a supplied reference is being replicated, record these fields for every
+arrow family in `visual-spec.md`. Inspect representative arrows at 200–400%
+zoom and measure in source pixels before converting to points. A visually
+similar route with the wrong head-to-shaft ratio is not a style match.
+
+## Reference-matched implementation ladder
+
+Choose the lowest tier that survives an independent PowerPoint render:
+
+1. **Native connector with built-in marker.** Use only when its silhouette,
+   head proportion, endpoint gap, and rendered result match the reference.
+2. **Hybrid editable arrow.** Draw the shaft as a native connector and add a
+   separate native/freeform or named SVG arrowhead. Align and group them while
+   retaining the semantic edge in the connector ledger. This is preferred when
+   the default PowerPoint head is too large, too blunt, or shifts during export.
+3. **Custom vector path.** Use an editable freeform or embedded SVG for a
+   distinctive curved, looped, bidirectional, or illustrated arrow. Record its
+   semantic source and target explicitly because the path may not remain
+   auto-attached when a module moves.
+
+Do not select an arrow from a vector library merely because it is attractive.
+Search by the required morphology and relation, compare silhouettes side by
+side, and lock one arrow family for the panel. The visible marker may come from
+Flaticon/Iconfont or a custom SVG, but the data/control topology must remain
+recoverable from named ports and the connector ledger.
+
 ## Preferred and fallback visual families
 
-For visible arrow markers and operation symbols, search Flaticon or Alibaba
-Iconfont first when the requested style needs a richer family. Prefer a single
-pack that includes the required transition, funnel/filter, merge/split, and
-detail symbols. Download and register the actual SVG files; keep the relation
-topology as native connectors.
+For visible arrow markers and operation symbols, first test whether native
+geometry communicates the science more accurately. Search Flaticon or Alibaba
+Iconfont only when the requested reference uses a richer coherent marker
+family. Prefer a single pack, download and register the actual SVG files, and
+keep the relation topology as native connectors. Do not replace a scientific
+operation such as Top-m token retention with a generic metaphor when editable
+scores, tokens, or selection geometry are clearer.
 
 The skill bundles a small Lucide-derived **fallback** set in
 `assets/vector-arrows/`:
@@ -62,6 +111,12 @@ Use colored arrows only when color encodes a documented relation family. Main
 data flow stays dark. Avoid gradients, shadows, cartoon arrows, multiple icon
 families, and filled arrow bodies that are thicker than module strokes.
 
+The table above is a fallback style, not permission to overwrite a supplied
+reference. For exact replication, the measured reference profile wins. Store a
+token for each family, for example `main-flow`, `text-conditioning`,
+`degradation-control`, and `long-callout`, with its complete morphology rather
+than only color and width.
+
 ## Placement gate
 
 - Main-path module centers share one horizontal baseline.
@@ -83,6 +138,9 @@ families, and filled arrow bodies that are thicker than module strokes.
    both sides?
 4. Are all main-path arrows on one baseline and equally weighted?
 5. Would hiding the SVG markers still leave a valid connector topology?
+6. Does the independently rendered head silhouette and head-to-shaft ratio
+   match the source crop, rather than only the authoring preview?
+7. Do arrow tips stop at a consistent optical gap from target borders?
 
 If the answer to the fifth question is no, the figure has become a collection
 of decorative arrow images instead of an editable scientific diagram.

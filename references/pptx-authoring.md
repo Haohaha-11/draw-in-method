@@ -21,6 +21,8 @@ it must not replace native PowerPoint text, modules, or connectors.
 |---|---|
 | panel/container | native rectangle or rounded rectangle |
 | module/operator | native shape with editable text |
+| 2.5D computation block | independent native front/top/side faces plus explicit ports |
+| layered feature/tensor stack | repeated thin native prisms plus a transparent semantic connector envelope |
 | label/equation | native text box; use supported equation strategy when needed |
 | data/control relation | native connector with explicit arrowhead and route |
 | repeated stage | grouped native objects with consistent size and spacing |
@@ -39,6 +41,36 @@ arrowhead is visually unsuitable, use a no-head connector plus a small embedded
 SVG marker at the destination, grouped at handoff when practical. Use a compact
 SVG funnel/filter as a pruning operator between two connectors; never stretch a
 chevron until it visually becomes both the operator and the flow arrow.
+
+## 2.5D and layered-tensor authoring
+
+Read `shape-depth-and-frame-system.md` whenever a reference uses cuboids,
+extruded neural blocks, layered maps, or mirrored tensor plates. PowerPoint's
+built-in Cube/Bevel AutoShapes are acceptable quick-mode primitives, and its
+3-D Format/Rotation effects are acceptable only when their rendered material
+look matches the source. Neither is the camera-ready default when users need
+independently editable faces, explicit face colors, exact extrusion, mirrored
+perspective, or stable semantic ports.
+
+For precise academic figures:
+
+- build the major block from separate front, top, and side native faces;
+- build every visible feature/tensor plate as a thin prism rather than as an
+  offset flat quadrilateral when the source shows thickness;
+- draw rear plates first and keep one extrusion vector and shading rule per
+  family;
+- mirror left/right branch tensors in slant, extrusion direction, and visible
+  side face;
+- give faces stable names and keep text on the front plane;
+- attach connectors to explicit front-plane ports or a transparent group-sized
+  connector envelope, never to decorative top/side faces;
+- verify family coverage and object counts from the final inspection snapshot.
+
+The depth inventory belongs to Stage 1B. Record family id, form class,
+reference/planned instance counts, plates per instance, visible faces per plate,
+depth vector, mirror rule, and connector target. If six main cuboids are correct
+but three feature stacks or twelve branch tensors are still flat, Stage 1B has
+not passed.
 
 ## What “editable” means
 
@@ -102,9 +134,13 @@ Before delivery:
    connector routes;
 5. verify representative text, box, connector, group, and icon objects are
    independently selectable;
-6. confirm the slide does not contain a whole-canvas cover image that hides or
+6. when depth is present, verify a representative major block face set, thin
+   feature plate, mirrored tensor pair, and transparent connector envelope;
+7. compare expected and inspected `instances × plates × faces` counts for every
+   2.5D/layered family;
+8. confirm the slide does not contain a whole-canvas cover image that hides or
    replaces native objects;
-7. compare the rendered slide with the reference or approved visual spec for
+9. compare the rendered slide with the reference or approved visual spec for
    at least three screenshot-driven refinement cycles when fidelity matters.
 
 Deliver the `.pptx` plus the latest rendered PNG preview. Add SVG/PDF only when

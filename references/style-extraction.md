@@ -10,7 +10,7 @@ This protocol is mandatory when the user provides reference images as style sour
 
 ## The Rule
 
-**You may not draw a single `<mxCell>` until you have completed the style extraction table below.** If you cannot fill a row, you do not understand the reference well enough to draw.
+**You may not author native backend geometry until you have completed the style extraction table below.** If you cannot fill a row, you do not understand the reference well enough to draw.
 
 ## Style Extraction Table
 
@@ -49,6 +49,28 @@ Total distinct colors: ____ (should be 5-8 for a coherent palette)
 - Dash pattern for containers: ____ (e.g. "8 8")
 - Shadow: yes / no  |  opacity: ___%  |  offset: (_, _)
 - Fill opacity for background regions: ___%
+- Form classes present: flat / framed / layered / 2.5D / image frame / semantic container
+- 2.5D visible faces: __________  extrusion vector: (___, ___)px
+- 2.5D front/top/side fills: #______ / #______ / #______
+
+#### Depth-family coverage
+| family id | form class | reference count | planned count | plates / instance | visible faces | extrusion | mirror rule | connector target | status |
+|---|---|---:|---:|---:|---|---|---|---|---|
+| | | | | | | | | | |
+
+Inventory every visually distinct depth family, not only the largest cuboid.
+Mark a family as intentionally simplified or uncertain rather than silently
+flattening it. For PowerPoint, also record the chosen implementation mode:
+Cube/Bevel quick mode, 3-D effect, real 3D model, or editable face-built prism.
+
+#### Frame taxonomy
+| role | fill | stroke | weight | pattern | corner | padding |
+|------|------|--------|--------|---------|--------|---------|
+| data/image | | | | | | |
+| standard module | | | | | | |
+| key/proposed module | | | | | | |
+| control/operator | | | | | | |
+| semantic container | | | | | | |
 
 ### 4. Layout Rhythm
 - Outer margin (canvas edge to first content): ___px each side
@@ -62,7 +84,13 @@ Total distinct colors: ____ (should be 5-8 for a coherent palette)
 - Default arrow type: __________ (e.g. "classic", "block", "open")
 - Arrow color: #______
 - Arrowhead size: small / medium / large
+- Arrowhead silhouette: narrow triangle / broad triangle / stealth / open V / custom
+- Head length × width: ___px × ___px  |  shaft width: ___px
+- Line cap / join: __________ / __________
+- Optical gap from tip to target border: ___px
 - Routing style: straight / orthogonal / curved
+- Curve control / bend radius: __________
+- Dash length / gap / phase: __________
 - Do arrows have labels? yes / no  |  font size: ___pt
 - Do arrows use color coding by meaning? yes / no
 
@@ -71,7 +99,9 @@ Total distinct colors: ____ (should be 5-8 for a coherent palette)
 - Icon size: ___px × ___px (typical)
 - Icon stroke width: ___px
 - Are icons color-coded by category? yes / no
-- Source: bundled Tabler SVGs / user-provided / must download
+- Asset classes present: official mark / conventional glyph / paper-specific operator / decorative
+- Source: official SVG / identifiable library pack / user-provided / reference-traced / must search
+- Must preserve exact silhouette: yes / no  |  reason: __________
 
 ### 7. Density & Composition
 - Diagram type: pipeline / layered / grid / tree / swimlane / feedback loop
@@ -90,9 +120,15 @@ After filling the table, the extracted values become your **style contract**. Yo
 When authoring XML:
 1. Set your palette to exactly the hex codes you extracted. Do not pick random colors.
 2. Set your font sizes to exactly the extracted values. Do not eyeball it.
-3. Match the corner radius, stroke width, and dash pattern exactly.
+3. Match the frame taxonomy, corner treatment, stroke width/color, dash pattern,
+   and 2.5D extrusion/shading exactly. Do not flatten a depth family, omit a
+   secondary tensor family after completing the main cuboid, or apply one
+   universal border style. Verify `instances × plates × faces` against the
+   depth-family coverage table.
 4. Use the same gap values between all same-type elements. Consistency is the cheapest way to look professional.
-5. Mirror the arrow grammar: same type, same color, same routing style.
+5. Mirror the complete arrow morphology: same head silhouette and proportion,
+   shaft, cap/join, endpoint gap, route, curvature, dash, and color. Verify it in
+   an independent render rather than trusting the backend preview.
 
 ## Semantic Justification (MANDATORY — The Anti-Decoration Rule)
 

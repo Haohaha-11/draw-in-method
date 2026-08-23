@@ -104,6 +104,19 @@ Starting dimensions on a 1600 × 900 canvas:
 - Tensor stacks, cubes, and token strips are compact data encodings, not
   decoration. Show only enough repetition to communicate dimensionality.
 
+### Depth and frame gate
+
+When a supplied reference distinguishes flat controls, framed operators,
+layered tensors, and 2.5D computation blocks, preserve that distinction. Do not
+flatten the source's repeated neural blocks or apply pseudo-3D to every box.
+Extract one extrusion vector and face-color rule per family, and extract frame
+styles by semantic role rather than using one global black outline. Read
+`shape-depth-and-frame-system.md` and record the tokens in `visual-spec.md`.
+Inventory every depth family and its expected instance/plate/face counts before
+drawing. In PowerPoint, Cube/Bevel and 3-D Format are quick-mode choices; use
+independent editable faces and transparent semantic connector envelopes when
+camera-ready fidelity, mirrored tensors, per-face colors, or stable ports matter.
+
 ### Density gate
 
 Outer-frame occupancy is not enough. A panel can fill the canvas and still feel
@@ -175,6 +188,11 @@ whether an arrowhead is required.
   motif, but they do not replace the semantic connector ledger. Use a separate
   compact SVG operator (for example a funnel for Top-m pruning) when an action
   occurs between modules. Read `arrow-system.md` for the required split.
+- For reference replication, a connector is approved only after its rendered
+  arrowhead silhouette, head-to-shaft ratio, cap/join, optical endpoint gap,
+  and route curvature match the extracted source family. A built-in
+  PowerPoint arrowhead is not automatically acceptable merely because the edge
+  points in the correct direction.
 
 ## 6. Four-stage incremental production
 
@@ -184,8 +202,9 @@ one of the four visible drawing stages. Then follow
 `staged-drawing-workflow.md`:
 
 1. **Architecture, base color, modules, and arrows** — establish canvas regions,
-   low-saturation semantic fills, module-size families, alignment baselines,
-   ports, and every connector. Review incrementally after the canvas/regions,
+   low-saturation semantic fills, module-size families, flat/2.5D/layered form
+   classes, frame-style tokens, alignment baselines, ports, and every connector.
+   Review incrementally after the canvas/regions,
    module composition, main connector skeleton, and branch/merge/skip/feedback
    routes. Base color belongs here because it changes grouping and visual
    weight; final text and decorative assets do not.
@@ -220,6 +239,8 @@ Reject or revise a draft when any of the following is true:
 - module sizes vary without semantic reason;
 - more than five saturated semantic fills compete for attention;
 - arrow colors are decorative, arrowheads overlap, or routes cross labels;
+- the reference's arrow morphology, 2.5D family, or frame hierarchy has been
+  replaced by backend defaults without a documented reason;
 - a helper card is larger than the proposed mechanism;
 - the main reading path is not immediately visible at paper scale;
 - the output is a flattened screenshot instead of native editable objects.

@@ -30,6 +30,7 @@
 - [快速开始](#快速开始)
 - [工作流程](#工作流程)
 - [架构图模式](#架构图模式)
+- [2.5D 模块与层叠张量](#25d-模块与层叠张量)
 - [矢量图标与资产检索](#矢量图标与资产检索)
 - [证据文件与语义模型](#证据文件与语义模型)
 - [命令行工具](#命令行工具)
@@ -64,6 +65,7 @@
 
 - 文字保持为可编辑文本；
 - 模块保持为独立形状；
+- 2.5D 计算块可由独立的正面、顶面和侧面构成，层叠张量可由多张薄棱柱构成；
 - 数据流保持为连接符；
 - 重复模块可以作为逻辑组移动；
 - 输入图片、热力图和真实数据仅在其确实代表数据时使用栅格图；
@@ -87,7 +89,7 @@ Draw.io 后端生成可维护的 XML：
 
 - **内容证据**：模块名称、阶段顺序、公式、张量、箭头方向；
 - **结构证据**：分组、分支、汇合、重复模块和阅读顺序；
-- **风格证据**：字体、字号、色板、圆角、线宽、密度和留白；
+- **风格证据**：字体、字号、色板、箭头形态、框线层级、2.5D 深度、圆角、密度和留白；
 - **布局证据**：区域比例、基线、模块尺寸和连接通道；
 - **不确定证据**：模糊文字、无法确认的公式或可能被遮挡的边。
 
@@ -297,7 +299,7 @@ flowchart LR
 这一步建立整张图的视觉骨架，并边添加边 review：
 
 - **1A 画布与区域**：确定画布比例、外边距、面板分区、阅读方向和低饱和度底色；
-- **1B 模块组合**：建立普通模块、小算子、创新模块和容器的尺寸族，统一重复模块；
+- **1B 模块组合**：建立普通模块、小算子、创新模块和容器的尺寸族，统一重复模块；把每个可见家族分类为 flat、framed、2.5D block、layered tensor、data frame 或 semantic container，并记录参考数量、计划数量、面／板片结构、挤出向量、镜像规则和连接目标；
 - **1C 主连接骨架**：确定主数据流基线、端口、箭头方向和专用通道；
 - **1D 复杂关系**：补充分支、汇合、跳连、反馈、控制和更新关系，并检查交叉与遮挡；
 - 输入、输出、控制和辅助端口；
@@ -404,6 +406,63 @@ ImageGen 生成的透明 PNG 是位图素材，不是真正的 SVG 矢量图标�
 | Token / Tensor 单元 | 14–24 px 方块 |
 
 这些数值是起点，不是绝对模板。真正约束是：相同模块保持一致，辅助模块不应比创新模块更抢眼，图在论文目标尺寸下仍能阅读。
+
+---
+
+## 2.5D 模块与层叠张量
+
+PowerPoint 确实内置了 Cube、Bevel 等 AutoShape，也可以对普通形状应用“三维格式”和“三维旋转”，还可以插入真正的 3D 模型。但这些能力解决的是不同问题：
+
+| 模式 | 适用场景 | 默认限制 |
+|---|---|---|
+| Cube / Bevel 快速模式 | 草图、简单标准块、无需逐面控制 | 一个对象、一个主要填充逻辑，逐面配色和端口控制有限 |
+| PowerPoint 三维效果 | 参考图本身具有材质、光照和三维旋转 | 正面／顶面／侧面不是独立对象，跨渲染器结果可能变化 |
+| 真实 3D 模型 | 设备、器官、机械结构等真实上下文 | 不适合抽象编码器、Transformer、张量和融合模块 |
+| 独立面组合 | 投稿级架构图和高保真参考复现 | 对象较多，但深度、颜色、镜像、边框和端口完全可控 |
+
+相关微软官方能力入口：[Cube / Bevel AutoShape 类型](https://learn.microsoft.com/en-us/office/vba/api/office.msoautoshapetype)、[形状的 Bevel 与 3-D Rotation 效果](https://support.microsoft.com/en-US/Office/graphics-visuals/add-a-fill-or-effect-to-a-shape-or-text-box)、[插入和旋转 3D 模型](https://support.microsoft.com/en-US/Office/graphics-visuals/get-creative-with-3d-models)。
+
+高保真模式默认采用独立面组合：
+
+```text
+正面 front face
++ 较浅顶面 top face
++ 较深侧面 side face
++ 正面端口或透明语义连接包络
+```
+
+### 深度家族覆盖审计
+
+不能因为一个主要立方体画对了，就认为整张图的 2.5D 已经完成。Stage 1B 必须建立深度家族清单：
+
+| 字段 | 例子 |
+|---|---|
+| family id | `encoder-block`、`multiscale-feature-stack`、`tim-side-tensor` |
+| form class | 2.5D block、layered tensor、flat control |
+| reference / planned count | 参考图和当前图的实例数量 |
+| plate / face grammar | 每组板片数，以及 front/top/side 是否可见 |
+| depth token | `(dx, dy)`、斜率、顶面与侧面配色 |
+| mirror rule | 无镜像、左右镜像或分阶段透视 |
+| connector target | 正面端口或整组透明包络 |
+
+例如一张参考图同时包含 6 个主计算块、3 组多尺度特征和 12 组分支张量时，只完成 6 个主计算块不算通过；其余家族必须匹配、标记不确定，或说明为何有意简化。
+
+### 三种可编辑 2.5D 配方
+
+1. **主计算块**：前矩形承载文字，顶面和侧面共享一个挤出向量；重复模块的尺寸、面色、线宽和对象名一致。
+2. **多尺度特征堆叠**：每一张可见特征板都是薄棱柱，不是简单错位的平面多边形；其深度小于主计算块。
+3. **左右分支张量**：使用倾斜前平面和明确的顶面／侧面；右侧对象需要同时镜像斜率、挤出方向和可见侧面，而不是只把位置反过来。
+
+### 连接与对象命名
+
+- 箭头不能连接装饰性顶面或侧面；
+- 主模块使用明确的 front-face port；
+- 层叠张量使用覆盖整组的透明 connector envelope，让上下左右关系连接到语义整体；
+- 建议对象命名采用 `family-instance-plate-02-front-face`、`...-top-face`、`...-side-face`；
+- 绘制顺序为后层到前层；单张板片内部先画顶面／侧面，再画正面；
+- 最终检查 `instances × plates × faces` 和 connector envelope 数量，避免只看截图而漏掉被平面化的家族。
+
+完整实现与验收规则见 [shape-depth-and-frame-system.md](references/shape-depth-and-frame-system.md)。
 
 ### 箭头语法
 
@@ -630,6 +689,8 @@ python scripts/edgeports.py <figure>.drawio
 - 箭头不会穿过文字或模块；
 - 箭头方向、扇入扇出和汇合点没有歧义；
 - 相同模块使用相同尺寸和样式；
+- 参考图中的 flat、framed、2.5D 和 layered 家族已经逐类覆盖，数量差异都有说明；
+- 2.5D 的顶面、侧面、镜像方向和深度层级在独立 PowerPoint 渲染中仍然可见；
 - 颜色具有稳定语义，而不是随机装饰；
 - 图例不占用主数据流；
 - 画布贴合构图，没有大面积无意义留白。
@@ -641,6 +702,9 @@ PowerPoint 中至少应能分别选择和修改：
 - 一段科学文字；
 - 一个普通模块；
 - 一个创新模块；
+- 一个 2.5D 主模块的正面、顶面和侧面；
+- 一张 layered tensor 薄棱柱及其镜像对应项；
+- 一个透明语义 connector envelope；
 - 一条主数据连接符；
 - 一个重复模块组；
 - 一个独立矢量图标。
@@ -674,7 +738,9 @@ draw-in-method/
 │   ├── pptx-authoring.md
 │   ├── reference-replication-protocol.md
 │   ├── semantic-first-workflow.md
+│   ├── shape-depth-and-frame-system.md
 │   ├── staged-drawing-workflow.md
+│   ├── contextual-asset-strategy.md
 │   ├── vector-assets.md
 │   ├── xml-authoring.md
 │   └── ...
@@ -702,6 +768,8 @@ draw-in-method/
 - [SKILL.md](SKILL.md)：Codex 实际加载的核心决策和工作流；
 - [architecture-figure-contract.md](references/architecture-figure-contract.md)：架构图字体、色板、尺寸和箭头合同；
 - [arrow-system.md](references/arrow-system.md)：原生连接器、矢量箭头 marker 与操作符图标的三层语法；
+- [shape-depth-and-frame-system.md](references/shape-depth-and-frame-system.md)：PowerPoint 2.5D 选择层级、独立面构造、层叠张量、镜像和框线系统；
+- [contextual-asset-strategy.md](references/contextual-asset-strategy.md)：图标必要性、视觉家族锁定和结构／外观边界；
 - [staged-drawing-workflow.md](references/staged-drawing-workflow.md)：四步生产流程、增量 review 检查点和批准门槛；
 - [pptx-authoring.md](references/pptx-authoring.md)：PowerPoint 原生可编辑后端；
 - [semantic-first-workflow.md](references/semantic-first-workflow.md)：语义图和不确定性处理；
@@ -787,6 +855,7 @@ git status --short
 当前计划继续优化：
 
 - [x] 四步生产流程、增量 review 检查点和用户确认记录规范；
+- [x] PowerPoint 2.5D 选择层级、深度家族覆盖审计、层叠张量与连接包络规则；
 - [ ] 自动导出并归档每个 PPTX 阶段的中间预览；
 - [ ] 连接符通道自动规划、端口分配和交叉最小化；
 - [ ] 对 PowerPoint 原生对象的更细粒度可编辑性检查；
@@ -816,6 +885,6 @@ git status --short
 
 ## English summary
 
-`draw-in-method` is a Codex skill for understanding, designing, and replicating camera-ready academic figures. It uses a semantic-first figure model, explicit connector semantics, named vector-asset retrieval, native editable PowerPoint or Draw.io backends, and rendered-preview validation.
+`draw-in-method` is a Codex skill for understanding, designing, and replicating camera-ready academic figures. It uses a semantic-first figure model, explicit connector semantics, depth-family coverage audits, editable face-built 2.5D blocks and layered tensors, named vector-asset retrieval, native editable PowerPoint or Draw.io backends, and rendered-preview validation.
 
 The project is intentionally optimized for research-method figures rather than generic presentation infographics. Its central rule is simple: understand the method first, make every visible element scientifically meaningful, and treat the editable native artifact—not a flattened screenshot—as the source of truth.

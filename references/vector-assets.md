@@ -14,43 +14,44 @@ plausible candidates, selection reason, and fallback reason in
 `asset-ledger.md`. This makes asset choice reproducible and prevents drawing a
 generic substitute before understanding what the entity represents.
 
-Use source priority, not merely implementation convenience. For physical and
-context assets, the preferred visual source is Flaticon or Alibaba Iconfont.
-A cached local SVG counts as preferred only when its registry entry records one
-of those providers and the exact asset-page provenance. Choose sources in this
-order:
+Use semantic necessity and family coherence before source priority. Read
+`contextual-asset-strategy.md` first. For justified physical and context
+assets, Flaticon or Alibaba Iconfont are preferred acquisition sources only
+when a coherent pack satisfies the declared visual-family contract. A cached
+local SVG counts as preferred only when its registry entry records its provider,
+pack/family, and exact asset-page provenance. Choose sources in this order:
 
 1. Use native editable backend primitives for model computation, tensors, operators,
    attention, feature interaction, and paper-specific mechanisms.
-2. Search the local registry with `scripts/vector_assets.py search` for an
-   exact previously downloaded **Flaticon or Iconfont** asset using the
-   canonical name and aliases. Reuse it only if its style fits the current
-   figure.
-3. If no exact preferred-provider asset is cached, search Flaticon and Alibaba
-   Iconfont through their normal visible UI. Compare a small set of candidates
-   before downloading the selected SVG; do not treat a search-result thumbnail
-   or page link as the delivered asset.
-4. If both preferred providers lack an adequate candidate, consider Iconify or
-   another user-authorized external provider, then `scripts/shapesearch.py` for
-   native Draw.io engineering/cloud shapes. Use `scripts/aiicons.py` only for a
-   required AI/LLM brand mark.
-5. Use bundled Lucide assets, generic native symbols, or a constrained custom
+2. For each proposed asset, pass the necessity test. Reject decorative assets
+   and generic metaphors for abstract computation.
+3. Search the local registry with `scripts/vector_assets.py search` for an
+   exact previously downloaded asset using the canonical name and aliases.
+   Reuse it only if its recorded family fits the current panel.
+4. If no exact asset is cached, search Flaticon and Alibaba Iconfont through
+   their normal visible UI. Compare a candidate **set** that covers the panel's
+   entities in one visual family; do not optimize one slot at a time.
+5. If both preferred providers lack an adequate coherent family, consider
+   Iconify or another user-authorized external provider, then
+   `scripts/shapesearch.py` for native Draw.io engineering/cloud shapes. Use
+   `scripts/aiicons.py` only for a required AI/LLM brand mark.
+6. Use a coordinated generated asset sheet, reference-extracted raster assets,
+   bundled Lucide assets, generic native symbols, or a constrained custom
    primitive icon only as documented fallbacks. Record the provider queries,
    rejected candidates, and concrete failure reason.
 
 Use rich vector assets mainly for inputs, physical devices, subjects,
-experimental apparatus, application contexts, and outputs. Do not put an icon
-in every model block. Within one panel, keep one dominant non-brand icon family
-unless a semantic exception is necessary.
+experimental apparatus, application contexts, brands, and outputs. Do not put
+an icon in every model block. Within one panel, use one declared visual family;
+brand marks are explicit exceptions and must remain visually subordinate.
 
 Arrow and connector assets are a special case. Read `arrow-system.md` before
-using them. Search a coherent family by semantic name (`arrow right`,
-`conditioning`, `feedback`, `funnel`, `filter`, `zoom detail`) rather than
-browsing decorative arrows. Ordinary data-flow relations must still be backed
-by editable connectors. Library SVGs are appropriate for consistent rounded
-arrowheads, short transition motifs, pruning/routing operators, and detail-view
-markers; they are not a license to replace the whole topology with floating
-arrow pictures.
+using them. Ordinary data-flow relations remain continuous editable connectors.
+The default is a restrained native arrowhead; do not place repeated circular or
+boxed arrow images in every gap. A library SVG marker is allowed only when one
+coherent marker family clearly improves the reference match and the underlying
+connector remains valid without it. Pruning/routing should usually be expressed
+as native scientific geometry rather than a generic funnel icon.
 
 ## Importing user-downloaded assets
 

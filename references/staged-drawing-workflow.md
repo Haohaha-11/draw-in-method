@@ -47,7 +47,20 @@ such as `STAGE 1A` inside the paper figure canvas.
 - Add the main-path modules using short placeholder names or stable node IDs.
 - Establish standard, small-operator, proposed-module, and group-container size
   families.
+- Classify every visible family as flat, framed, 2.5D block, layered tensor,
+  data frame, or semantic container. Record the reference count, planned count,
+  face/plate grammar, extrusion vector, mirror rule, and connector target in the
+  depth-family inventory from `shape-depth-and-frame-system.md`.
 - Add repeated modules with identical dimensions and spacing.
+- For PowerPoint, explicitly choose quick Cube/Bevel mode, PowerPoint 3-D
+  effects, a real 3D model, or editable face-built prisms. Use editable
+  front/top/side faces for camera-ready computation blocks and layered tensors
+  whenever exact face colors, measured depth, mirrored perspective, or stable
+  ports matter.
+- Build layered feature stacks from independent thin prisms and mirror compact
+  left/right branch tensors in both slant and visible depth direction. Reserve
+  a transparent connector envelope when the topology belongs to the whole
+  stack rather than one decorative plate.
 - Compare the visual weight of proposed versus helper modules.
 - Review alignment, gaps, padding, branch capacity, and unused whitespace.
 - Inspect a full-canvas thumbnail as well as a crop. If routine module names
@@ -89,6 +102,10 @@ Approve the architecture only when:
 - module size ratios are coherent;
 - the dominant reading path is immediately visible;
 - repeated modules match;
+- every reference depth family is matched, intentionally simplified, or marked
+  uncertain; one correct main cuboid cannot hide flattened secondary stacks;
+- implemented `instances × plates × faces` and connector-envelope counts agree
+  with the Stage 1B inventory;
 - the base color blocks communicate grouping without decoration;
 - every connector has an explicit source, target, direction, and meaning;
 - all routes have enough room for the text and assets that will be added later.
@@ -137,20 +154,29 @@ Add visual assets only after structure and text have been approved. Assets
 support physical context, experimental apparatus, input/output examples, and
 domain recognition; they do not define the model's scientific graph.
 
+Read `contextual-asset-strategy.md` before searching. Every proposed icon must
+pass the necessity gate and belong to the panel's declared visual family.
+Abstract computation blocks are icon-free by default. Do not use a brain for
+"adaptive," a computer for "progressive," or a funnel for Top-m selection when
+the actual scientific operation can be shown more accurately with editable
+tokens, scores, and selection geometry.
+
 ### Asset decision order
 
-1. Search the local registry for a semantically exact, provenance-complete SVG
-   previously downloaded from Flaticon or Alibaba Iconfont.
-2. If no exact cached asset fits, search Flaticon and Alibaba Iconfont first
-   through the normal visible UI, review a small candidate set, and download
-   the selected SVG through the user's authorized browser/account flow.
-3. Only when both preferred providers fail, search another authorized external
-   provider or a generic native icon library. Record the rejected candidates
-   and the reason for leaving the preferred providers.
-4. Use image generation for a bespoke transparent-background bitmap cutout,
-   scene fragment, or illustrative context asset when no suitable vector
-   exists or a custom appearance is required.
-5. Construct an asset from primitives only for an abstract paper-specific
+1. Decide whether the entity needs an asset at all. Keep model computation,
+   tensors, and paper-specific operators as native editable geometry.
+2. Declare the panel's visual-family contract: outline/fill mode, stroke weight,
+   depth, palette, perspective, detail level, and typical paper-scale size.
+3. Search the local registry for a semantically exact, provenance-complete SVG
+   from the same Flaticon/Iconfont pack or another already approved family.
+4. If no exact cached asset fits, search Flaticon and Alibaba Iconfont through
+   the normal visible UI. Compare candidates as a family, not one slot at a
+   time, and download only assets that satisfy the shared contract.
+5. If no external family covers the justified entities, generate one coordinated
+   transparent-background asset sheet or extract assets from a user-supplied or
+   generated style draft. Treat these as raster appearance assets unless a real
+   vectorization workflow proves otherwise.
+6. Construct an asset from primitives only for an abstract paper-specific
    mechanism, an explicit user request, or a documented external-retrieval
    failure. Never make this substitution silently.
 
@@ -195,6 +221,8 @@ or a concrete fallback reason.
 Review asset placement for scale, crop, orientation, family consistency,
 contrast, and clearance from text and arrows. Assets should fit the reserved
 geometry; do not casually resize the approved architecture around a late asset.
+Reject the stage if individually attractive assets create a mixed clip-art
+collage, or if deleting an icon leaves the same meaning and improves clarity.
 
 ## Stage 4 — full visual review and coordinated refinement
 
@@ -234,7 +262,7 @@ required screenshot-driven defect cycles and red-team audit before handoff.
 | Gate | Required evidence |
 |---|---|
 | Preflight | validated `figure-model.json`, assumptions, unresolved evidence |
-| Stage 1 | architecture preview, module-size review, connector ledger and route review |
+| Stage 1 | architecture preview, module-size review, depth-family/count inventory, connector ledger and route review |
 | Stage 2 | labeled preview, terminology/notation check, text-overflow review |
 | Stage 3 | asset ledger, selected SVG/PNG files, strict asset-gate result, placement preview |
 | Stage 4 | final full-canvas render, dense-region review, validation results, editability check |
