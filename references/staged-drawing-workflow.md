@@ -172,11 +172,15 @@ tokens, scores, and selection geometry.
 4. If no exact cached asset fits, search Flaticon and Alibaba Iconfont through
    the normal visible UI. Compare candidates as a family, not one slot at a
    time, and download only assets that satisfy the shared contract.
-5. If no external family covers the justified entities, generate one coordinated
-   transparent-background asset sheet or extract assets from a user-supplied or
-   generated style draft. Treat these as raster appearance assets unless a real
-   vectorization workflow proves otherwise.
-6. Construct an asset from primitives only for an abstract paper-specific
+5. If no external family covers the justified entities, use ImageGen to
+   generate one coordinated transparent-background vector-style asset sheet,
+   or generate one isolated icon when only one named entity is missing. Extract
+   each subject into an independent image object. Treat these as raster
+   appearance assets unless a real vectorization workflow proves otherwise.
+6. When genuine SVG/path editability is required, vectorize only a simple,
+   suitable generated result, clean the traced paths, and validate the SVG
+   against the source PNG at paper scale before describing it as vector.
+7. Construct an asset from primitives only for an abstract paper-specific
    mechanism, an explicit user request, or a documented external-retrieval
    failure. Never make this substitution silently.
 
@@ -191,12 +195,19 @@ and validate the traced result.
 For generated assets:
 
 - request a transparent background and preserve alpha;
-- request one isolated subject with a tight crop and no baked scientific text;
+- request one isolated subject, or one coordinated sheet of all missing
+  same-family subjects, with no baked scientific text;
+- specify a vector-style drawing language explicitly: silhouette, stroke,
+  fill mode, cap/join, palette, viewpoint, detail level, and typical size;
+- prohibit background panels, mockups, borders, unrelated props, shadows, and
+  decorative labels unless they are part of the approved family contract;
 - specify viewpoint, orientation, palette, and empty-side composition so it
   fits the reserved slot;
+- inspect the alpha channel, white/gray halo, clipped extremities, crop,
+  orientation, and recognizability at intended manuscript scale;
 - move the selected output into the project workspace instead of leaving it in
   a temporary or tool-owned location;
-- record the prompt, local file, semantic role, and raster status in
+- record the prompt, local file, semantic role, family id, and raster status in
   `asset-ledger.md`.
 
 For retrieved vectors:

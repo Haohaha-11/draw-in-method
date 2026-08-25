@@ -100,6 +100,22 @@ transparent backgrounds and no text. Crop each subject into an independent
 asset. These outputs are raster unless a separately validated vectorization
 workflow converts them; never call the PNGs editable vectors.
 
+This route is also appropriate for a single missing icon when the retrieved
+candidates fail semantic or family fit. Ask ImageGen for a **vector-style
+transparent cutout**, not for a generic illustration: one isolated centered
+subject, clean silhouette, controlled stroke/fill language, no words, no
+border, no mockup, no background panel, no shadow unless the family contract
+requires it, and enough transparent margin to avoid clipping. If several
+assets are missing, prefer one coordinated sheet over unrelated one-off
+generations.
+
+After generation, verify that the file has a real alpha channel, no opaque
+white rectangle, no fringe/halo, no clipped extremity, and no unsupported tiny
+detail at manuscript scale. Record the prompt, seed/variant when available,
+local file, semantic role, family id, and `raster-generated` status. If genuine
+SVG is required, use a separate traced/vectorized derivative and validate its
+paths and rendered silhouette before recording it as vector.
+
 ### D. Reference/generated draft decomposition
 
 An AutoFigure-Edit-style route may use a supplied or generated raster draft as

@@ -35,10 +35,16 @@ pack/family, and exact asset-page provenance. Choose sources in this order:
    Iconify or another user-authorized external provider, then
    `scripts/shapesearch.py` for native Draw.io engineering/cloud shapes. Use
    `scripts/aiicons.py` only for a required AI/LLM brand mark.
-6. Use a coordinated generated asset sheet, reference-extracted raster assets,
-   bundled Lucide assets, generic native symbols, or a constrained custom
-   primitive icon only as documented fallbacks. Record the provider queries,
-   rejected candidates, and concrete failure reason.
+6. When the preferred sources and other authorized providers do not yield a
+   semantically exact, family-consistent SVG, use ImageGen to create a
+   transparent-background vector-style PNG. Prefer one coordinated sheet for
+   multiple missing same-panel icons. Generated PNGs are raster assets and are
+   not imported or registered as SVG merely because they look flat or use
+   clean lines.
+7. Use reference-extracted raster assets, bundled Lucide assets, generic native
+   symbols, or a constrained custom primitive icon only as documented
+   fallbacks. Record the provider queries, rejected candidates, generation
+   prompt/output when applicable, and concrete fallback reason.
 
 Use rich vector assets mainly for inputs, physical devices, subjects,
 experimental apparatus, application contexts, brands, and outputs. Do not put
